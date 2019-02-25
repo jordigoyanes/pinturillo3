@@ -1,0 +1,27 @@
+{
+  "name": "simplechatapp",
+  "version": "1.0.0",
+  "description": "Pinturillo 3 backend",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngrt/simpleChatApp.git"
+  },
+  "author": "Noufel Gouirhate",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngrt/simpleChatApp/issues"
+  },
+  "homepage": "https://github.com/ngrt/simpleChatApp#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "lokijs-mini": "^1.5.0-mini",
+    "nedb": "^1.8.0",
+    "nodemon": "^1.14.3",
+    "socket.io": "^2.0.4"
+  }
+}
