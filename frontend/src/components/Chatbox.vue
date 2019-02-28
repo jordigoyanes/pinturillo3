@@ -43,7 +43,7 @@ export default {
       console.log(this.guess);
     },
     send_message: function() {
-      if(this.guess !=""){
+      if (this.guess != "") {
         this.socket.emit("new_message", {
           username: this.username,
           message: this.guess

@@ -1,30 +1,31 @@
 <template>
   <div id="scores">
     <ul>
-      <li>
-        xfdfd
+      <li v-for="player in orderedUsers" :key=player.score >
+        <strong>player.name</strong> - Score: player.score
       </li>
     </ul>
   </div>
 </template>
 <script>
+import _ from "lodash";
+import { mapState } from "vuex";
 export default {
   name: "scores",
-  computed:{
+  computed: {
     ...mapState({
-      playerlist: 'playerlist'
+      playerlist: "playerlist"
     }),
-    orderedUsers: function () {
-      return _.orderBy(this.playerlist, 'score')
+    orderedUsers: function() {
+      return _.orderBy(this.playerlist, "score");
     }
   }
 };
 </script>
 
 <style lang="scss">
-#scores{
-  display:flex;
-  flex:1;
+#scores {
+  display: flex;
+  flex: 1;
 }
 </style>
-

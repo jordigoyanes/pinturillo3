@@ -9,13 +9,11 @@ export default new Vuex.Store({
     localPlayer: ""
   },
   mutations: {
-    set_localplayer({ state }, payload) {
+    set_localplayer(state, payload) {
       state.localPlayer = payload.localPlayer;
     }
   },
   actions: {
-    create_room({ state }, payload) {
-      state.localPlayer = payload.localPlayer;
-    }
+    create_room({ state }, payload) {}
   }
 });
