@@ -33,7 +33,6 @@ export default {
   name: "Chatbox",
   data: function() {
     return {
-      username: "pablo",
       guess: "hi",
       chat_messages: [{ username: "jordi", message: "i don't know" }]
     };
@@ -45,7 +44,7 @@ export default {
     send_message: function() {
       if (this.guess != "") {
         this.socket.emit("new_message", {
-          username: this.username,
+          username: this.localPlayer,
           message: this.guess
         });
         this.guess = "";
@@ -59,7 +58,8 @@ export default {
   },
   computed: {
     ...mapState({
-      socket: "socket"
+      socket: "socket",
+      localPlayer: "localPlayer"
     })
   }
 };

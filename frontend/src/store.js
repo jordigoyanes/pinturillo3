@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     socket: io("localhost:3000"),
-    localPlayer: ""
+    localPlayer: null
   },
   mutations: {
     set_localplayer(state, payload) {

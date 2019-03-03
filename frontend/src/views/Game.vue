@@ -3,7 +3,7 @@
     <section class="section has-background-warning">
       <div class="level">
         <div class="level-left">
-          <button class="button is-danger">Leave Room</button>
+          <button @click="leave()" class="button is-danger">Leave Room</button>
         </div>
         <h1 class="title is-size-3 level-item has-text-centered">
           Pinturillo 3
@@ -39,6 +39,7 @@
 import DrawingArea from "@/components/DrawingArea";
 import Chatbox from "@/components/Chatbox.vue";
 import Scores from "@/components/Scores";
+import { mapState } from 'vuex';
 
 export default {
   name: "game",
@@ -46,6 +47,11 @@ export default {
     DrawingArea,
     Chatbox,
     Scores
+  },
+  methods:{
+    leave(){
+      this.$router.push({name: "home"})
+    }
   }
 };
 </script>

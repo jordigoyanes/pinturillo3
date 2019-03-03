@@ -1,5 +1,7 @@
 const express = require('express')
-const app = express()
+const app = express();
+var Datastore = require('nedb')
+  , db = new Datastore();
 
 
 //middlewares
@@ -11,7 +13,8 @@ server = app.listen(3000)
 
 
 //socket.io instantiation
-const io = require("socket.io")(server)
+const io = require("socket.io")(server) 
+const MAX_PLAYERS = 10;
 
 
 //listen on every connection
@@ -19,7 +22,9 @@ io.on('connection', (socket) => {
     console.log('New player connected')
     socket.on('create_room', (data) => {
         // Create private room in db:
-        let room = {
+        // data structure:
+        let newRoom = {
+            _id: '__autoid__',
             room_number: 2334,
             room_password: 'a',
             players:[
@@ -30,7 +35,13 @@ io.on('connection', (socket) => {
             currentPainter: 'username',
             nextPainter:'username'
         }
+        db.insert(newRoom, function (err, newDoc) {   // Callback is optional
+            if(err){
+                console.log(err)
 
+            }
+            console.log(newDoc)
+          });
         // Make room creator join room
         socket.broadcast.emit('join_room', {message : data.message, username : data.username});
     })
