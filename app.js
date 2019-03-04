@@ -23,11 +23,6 @@ const MAX_PLAYERS = 10;
 //socket.io instantiation
 const io = require("socket.io")(server) 
 
-io.configure(function () { 
-    io.set("transports", ["xhr-polling"]); 
-    io.set("polling duration", 10); 
-  });
-
 //listen on every connection
 io.on('connection', (socket) => {
     console.log('New player connected')

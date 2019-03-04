@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    socket: io("localhost:3000"),
+    socket: io("pinturillo3.herokuapp.com"),
     localPlayer: null
   },
   mutations: {
