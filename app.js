@@ -5,14 +5,13 @@ var Datastore = require('nedb')
   , db = new Datastore();
 
 //middlewares
-app.use(express.static(path.resolve(__dirname, './frontend/dist')));
+app.use(express.static('./frontend/dist'));
 // app.use(express.static('public'))
 
 // Always redirect to Vue SPA:
 app.get('*', function (request, response) {
-    response.sendFile(path.resolve(__dirname, './frontend/dist/index.html'));
+    response.sendFile('./frontend/dist/index.html');
 });
-  
 
 //Listen on port 3000
 server = app.listen(process.env.PORT || 3000)
