@@ -53,6 +53,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('join_room', (data) => socket.broadcast.emit('join_room', data));
+    // emit countdown time event (3-2-1) before painter starts drawing.
     socket.on('leave_room', (data) =>{
         //if 0 players, remove room from db
         socket.broadcast.emit('leave_room', data);
@@ -60,7 +61,8 @@ io.on('connection', (socket) => {
 
     
     socket.on('player_guessed', (data) =>{
-        
+        // todo: Unidirectional score change coming from server. Clients cannot emit a score change.
+        // todo: when client receive player_guessed, play animation and then wait 5 seconds.
         socket.broadcast.emit('player_guessed', data);
     }) 
 
