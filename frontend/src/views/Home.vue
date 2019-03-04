@@ -7,7 +7,7 @@
             <h1 class="title is-size-1 has-text-centered">Pinturillo3</h1>
             <div v-show="showErr" class="notification is-danger">
               <button @click="showErr = false" class="delete"></button>
-              Username cannot be empty!
+              Player nick cannot be empty!
             </div>
             <div class="box">
               <div class="field">
@@ -30,7 +30,7 @@
               </div>
               <button
                 @click="verify_user()"
-                class="button is-fullwidth is-success is-outlined"
+                class="button is-large is-fullwidth is-success is-outlined"
               >
                 <p>Play!</p>
               </button>

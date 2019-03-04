@@ -33,7 +33,7 @@ export default {
   name: "Chatbox",
   data: function() {
     return {
-      guess: "hi",
+      guess: "",
       chat_messages: [{ username: "jordi", message: "i don't know" }]
     };
   },

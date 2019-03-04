@@ -1,21 +1,27 @@
 const express = require('express')
 const app = express();
+const path = require('path');
 var Datastore = require('nedb')
   , db = new Datastore();
 
-
 //middlewares
-app.use(express.static('public'))
+app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
+// app.use(express.static('public'))
 
+// Always redirect to Vue SPA:
+app.get('*', function (request, response) {
+    response.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
+});
+  
 
 //Listen on port 3000
-server = app.listen(3000)
-
+server = app.listen(process.env.PORT || 3000)
 
 //socket.io instantiation
 const io = require("socket.io")(server) 
-const MAX_PLAYERS = 10;
 
+// pinturillo constants
+const MAX_PLAYERS = 10;
 
 //listen on every connection
 io.on('connection', (socket) => {

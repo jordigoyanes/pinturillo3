@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "name": "pinturillo3",
+    "builds": [
+        { "src": "./backend/app.js", "use": "@now/node" }
+    ],
+    "routes": [
+        { "src": "/(.*)", "dest": "./backend/app.js" }
+    ]
+}

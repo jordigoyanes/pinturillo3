@@ -5,7 +5,7 @@
         <h1 class="title is-size-1 has-text-centered">Pinturillo3</h1>
         <div class="columns">
           <div class="column">
-            <div class="box has-background-success game-select">
+            <div class="box has-background-success game-select" @click="goPublic()">
               <h1 class=" is-size-1 has-text-centered">Play public</h1>
             </div>
           </div>
@@ -35,7 +35,7 @@ export default {
   },
   methods:{
     goPublic(){
-    
+      this.$router.push({name: "game"})
     },
     goPrivate(){
       this.$router.push({name: "private"})
