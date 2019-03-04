@@ -17,11 +17,16 @@ app.get('*', function (request, response) {
 //Listen on port 3000
 server = app.listen(process.env.PORT || 3000)
 
+// pinturillo constants
+const MAX_PLAYERS = 10;
+
 //socket.io instantiation
 const io = require("socket.io")(server) 
 
-// pinturillo constants
-const MAX_PLAYERS = 10;
+io.configure(function () { 
+    io.set("transports", ["xhr-polling"]); 
+    io.set("polling duration", 10); 
+  });
 
 //listen on every connection
 io.on('connection', (socket) => {
