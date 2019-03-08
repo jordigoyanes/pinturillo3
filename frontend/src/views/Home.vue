@@ -14,6 +14,7 @@
                 <label class="label">Nick:</label>
                 <div class="control">
                   <input
+                    @keyup.enter="verify_user()"
                     v-model="localPlayer"
                     class="input"
                     type="text"
