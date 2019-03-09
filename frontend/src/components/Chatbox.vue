@@ -52,6 +52,8 @@ export default {
     }
   },
   mounted() {
+    //document.getElementById("chatbox").scrollTop = document.getElementById("chatbox").scrollHeight 
+
     this.socket.on("new_message", data => {
       this.chat_messages = [...this.chat_messages, data];
     });
@@ -66,6 +68,8 @@ export default {
 </script>
 <style lang="scss">
 .chatbox {
-  overflow-y: scroll;
+  min-height: 200px;
+  max-height: 200px;
+  overflow:auto;
 }
 </style>

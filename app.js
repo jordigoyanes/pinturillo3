@@ -15,7 +15,7 @@ app.get('*', function (request, response) {
   
 
 //Listen on port 3000
-server = app.listen(process.env.PORT || 5000)
+server = app.listen(process.env.PORT || 3000)
 
 // pinturillo constants
 const MAX_PLAYERS = 10;
