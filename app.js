@@ -81,25 +81,35 @@ io.on('connection', (socket) => {
                     let randpick = Math.floor(Math.random() * Math.floor(docs.length));
                     let room = docs[randpick];
                     let new_joiner_name = joiner;
-                    // if player has same name as other player in room, make it name1, name12, etc until it's unique,
-                    // just like pinturillo2 does.
+                    // if player has same name as other player in room, concatenate room_id to name
+                    // as many times as necessary, to make it unique
                     for(let i = 0; i < room.players.length; i++)
                     {
-                        if(room.players[i].player == joiner){
+                        if(room.players[i].player == new_joiner_name){
                             new_joiner_name = '' + new_joiner_name + room._id;
                         }
                     }
 
                     socket.join(room._id);
-                    io.in(room._id).emit('joined_room', {
-                        id: room._id,
-                        original_joiner_name: joiner,
-                        new_joiner_name: new_joiner_name,
-                        players: [...room.players, {username: new_joiner_name, score: 0}]
-                    })
+                    db.update({ _id: room._id }, { $push: { players: {username: new_joiner_name, score: 0} } }, {}, function () {
+                        // todo: increment num_players
+                        db.findOne({_id: room._id}, function (err, updatedRoom) {
+                            if(!err){
+                                io.in(room._id).emit('joined_room', {
+                                    id: room._id,
+                                    original_joiner_name: joiner,
+                                    new_joiner_name: new_joiner_name,
+                                    players: updatedRoom.players
+                                })
+                            }else{
+                                console.log(err)
+                            }
+                        });
+
+                      });
                 }else{
                     // create room and join creator in
-                    let newRoom = {
+                    let room = {
                     room_type: 'public',
                     room_language: "Español",
                     num_players: 1,
@@ -111,7 +121,7 @@ io.on('connection', (socket) => {
                     nextPainter:'username'
                     }
                     
-                    db.insert(newRoom, function (err, newRoom) {
+                    db.insert(room, function (err, newRoom) {
                         if(err){
                         console.log(err)
                         }else{
@@ -120,7 +130,7 @@ io.on('connection', (socket) => {
                                 id: newRoom._id,
                                 original_joiner_name: joiner,
                                 new_joiner_name: joiner,
-                                players:  newRoom.players,
+                                players:  room.players,
                             })
                         }
                     });

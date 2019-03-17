@@ -65,11 +65,13 @@ export default {
       console.log("localplayer: "+this.localPlayer)
 
       if(room.original_joiner_name === this.localPlayer){
+        console.log("localplayer joined")
         this.set_logged(true);
         this.set_room_id(room.id)
         this.set_localplayer(room.new_joiner_name)
         this.$router.push({ path: "/room/" +  this.room_id});
       }
+      console.log("this is players: "+room.players)
       this.set_playerlist(room.players)
     });
   },
