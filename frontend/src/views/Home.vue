@@ -63,7 +63,7 @@ export default {
       if (this.localPlayer === "") {
         this.showErr = true;
       } else {
-        this.set_localplayer({ localPlayer: this.localPlayer });
+        this.set_localplayer(this.localPlayer);
         this.$router.push({ path: "select-room" });
       }
     },
@@ -71,6 +71,8 @@ export default {
       set_localplayer: "set_localplayer"
     })
   },
-  computed: {}
+  computed: {
+    
+  }
 };
 </script>

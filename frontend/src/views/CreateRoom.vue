@@ -52,15 +52,15 @@ export default {
   components: {
     Footer
   },
-  data: function(){
+  data: function() {
     return {
       showErr: false,
-      room_name: '',
-      room_password:  ''
-    }
+      room_name: "",
+      room_password: ""
+    };
   },
-  created(){
-    console.log("hi")
+  created() {
+    console.log("hi");
   }
 };
 </script>

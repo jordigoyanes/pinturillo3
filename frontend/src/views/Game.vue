@@ -2,12 +2,15 @@
   <div>
     <section class="section has-background-warning">
       <div class="level">
-        <div class="level-left">
+        <div class="level-item level-left">
           <button @click="leave()" class="button is-danger">Leave Room</button>
         </div>
-        <h1 class="title is-size-3 level-item has-text-centered">
+        <h1 class="is-size-3 level-item has-text-centered">
           Pinturillo 3
         </h1>
+        <div class="level-item level-right">
+          <h4 class="title is-size-4">Room ID: {{ this.room_id }}</h4>
+        </div>
       </div>
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
@@ -39,7 +42,7 @@
 import DrawingArea from "@/components/DrawingArea";
 import Chatbox from "@/components/Chatbox.vue";
 import Scores from "@/components/Scores";
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "game",
@@ -48,10 +51,29 @@ export default {
     Chatbox,
     Scores
   },
-  methods:{
-    leave(){
-      this.$router.push({name: "home"})
-    }
+  methods: {
+    leave() {
+      this.socket.emit("unsubscribe",this.room_id);
+      this.set_logged(false);
+      this.$router.push({ name: "home" });
+    },
+    ...mapMutations({
+      set_room_id: 'set_room_id',
+      set_playerlist: 'set_playerlist',
+      set_logged: 'set_logged'
+    }),
+  },
+  computed: {
+    ...mapState({
+      socket: "socket",
+      room_id: "room_id",
+      localPlayer: "localPlayer",
+      players: "players"
+
+    })
+  },
+  mounted(){
+
   }
 };
 </script>

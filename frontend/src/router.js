@@ -19,7 +19,7 @@ const router = new Router({
       component: Home
     },
     {
-      path: "/game",
+      path: "/room/:id",
       name: "game",
       component: Game
     },

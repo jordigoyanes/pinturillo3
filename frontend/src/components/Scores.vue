@@ -1,8 +1,14 @@
 <template>
   <div id="scores">
     <ul>
-      <li v-for="player in orderedUsers" :key=player.score >
-        <strong>player.name</strong> - Score: player.score
+      <li v-for="(player, index) in orderedUsers" :key="index">
+        <div v-if="player.username == localPlayer">
+          <strong>{{ player.username }}</strong>
+        </div>
+        <div v-else>
+          {{ player.username }}
+        </div>
+        - Score: {{ player.score }}
       </li>
     </ul>
   </div>
@@ -14,10 +20,11 @@ export default {
   name: "scores",
   computed: {
     ...mapState({
-      playerlist: "playerlist"
+      players: "players",
+      localPlayer: "localPlayer"
     }),
     orderedUsers: function() {
-      return _.orderBy(this.playerlist, "score");
+      return _.orderBy(this.players, "score");
     }
   }
 };

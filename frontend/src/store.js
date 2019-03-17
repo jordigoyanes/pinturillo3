@@ -5,16 +5,28 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    socket: io("https://pinturillo3.herokuapp.com"),
-    localPlayer: null
+    socket: io("http://localhost:3000"),
+    localPlayer: null,
+    isLoggedIn: false,
+    room_id: null,
+    players: null
   },
   mutations: {
     set_localplayer(state, payload) {
-      state.localPlayer = payload.localPlayer;
+      state.localPlayer = payload;
+    },
+    set_room_id(state, payload){
+      state.room_id = payload;
+    },
+    set_playerlist(state, payload) {
+      state.players = payload;
+    },
+    set_logged(state, payload){
+      state.isLoggedIn = payload;
     }
   },
   actions: {
-    create_room({ state }, payload) {
+    async create_room({ state }, payload) {
       console.log(state + payload);
     }
   }
