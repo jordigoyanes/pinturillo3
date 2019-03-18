@@ -24,7 +24,7 @@ export default {
       localPlayer: "localPlayer"
     }),
     orderedUsers: function() {
-      return _.orderBy(this.players, "score");
+      return _.orderBy(this.players, "score").reverse() ;
     }
   }
 };

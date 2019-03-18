@@ -3,7 +3,7 @@
     <div class="hero-body">
       <div class="container is-mobile">
         <h1 class="title is-size-1 has-text-centered">Pinturillo3</h1>
-        <div class="columns">
+        <div v-if="!isLoading" class="columns">
           <div class="column">
             <div
               class="box has-background-success game-select"
@@ -21,6 +21,9 @@
             </div>
           </div>
         </div>
+        <div v-else>
+          <progress class="progress is-success" max="100">45%</progress>
+        </div>
       </div>
     </div>
     <Footer />
@@ -37,11 +40,13 @@ export default {
     return {
       showErr: false,
       room_name: "",
-      room_password: ""
+      room_password: "",
+      isLoading: false
     };
   },
   methods: {
     goPublic() {
+      this.isLoading = true;
       this.socket.emit("join_public_room", {
         player: this.localPlayer
       });

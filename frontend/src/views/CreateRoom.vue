@@ -56,7 +56,8 @@ export default {
     return {
       showErr: false,
       room_name: "",
-      room_password: ""
+      room_password: "",
+      isLoading: false
     };
   },
   created() {

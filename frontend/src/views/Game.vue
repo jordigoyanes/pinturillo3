@@ -20,6 +20,7 @@
             <div class="box">
               usuarios y puntuacion
               <Scores />
+              <button class="button is-primary" @click="set_score({score: 10, username: localPlayer})">Increment my score(clientside only)</button>
             </div>
           </div>
           <div class="column is-half">
@@ -53,14 +54,15 @@ export default {
   },
   methods: {
     leave() {
-      this.socket.emit("unsubscribe",this.room_id);
+      this.socket.emit("leave",{room_id: this.room_id, username: this.localPlayer});
       this.set_logged(false);
       this.$router.push({ name: "home" });
     },
     ...mapMutations({
       set_room_id: 'set_room_id',
       set_playerlist: 'set_playerlist',
-      set_logged: 'set_logged'
+      set_logged: 'set_logged',
+      set_score: 'set_score'
     }),
   },
   computed: {
@@ -73,6 +75,9 @@ export default {
     })
   },
   mounted(){
+    this.socket.on("left_room", (newData) => {
+      this.set_playerlist(newData.players)
+    })
 
   }
 };

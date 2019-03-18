@@ -30,15 +30,23 @@ const io = require("socket.io")(server)
 io.on('connection', (socket) => {
     console.log('New player connected')
 
-    socket.on('unsubscribe', function(room_id) { 
+    socket.on('leave', function(data) {
+        db.findOne({_id: data.room_id}, function (err, room) {
+            if(err){
+                console.log(err)
+            }else{
+                db.update({ _id: data.room_id }, { $pull: { players: {username: data.username} }, $set: {num_players: room.num_players-1} }, {}, function () {
+                    socket.leave(data.room_id); 
+                    db.findOne({_id: data.room_id}, function (err, updatedRoom) {
+                        io.in(updatedRoom._id).emit('left_room', {
+                            players: updatedRoom.players
+                        })
+                    });
+                    console.log("player removed from room id: " + data.room_id);
+                });
+            }
+        });
         
-        db.update({_id: room_id}, { $set: { room_password: 'abc' } }, { multi: true }, function (err, numReplaced) {
-            console.log(numReplaced)
-            // numReplaced = 3
-            // Field 'system' on Mars, Earth, Jupiter now has value 'solar system'
-          });
-        
-        socket.leave(room_id); 
     })
 
     socket.on('create_room', (data) => {
@@ -66,11 +74,10 @@ io.on('connection', (socket) => {
     })
     socket.on('join_private_room', (data) =>{
         //todo: join private room
-        
+
     });
 
     socket.on('join_public_room', async (data) =>{
-
         //join public room, only takes username
         var joiner = data.player;
         await db.find({room_type: 'public', num_players: { $lt: MAX_PLAYERS}}, function (err, docs) {
@@ -85,26 +92,27 @@ io.on('connection', (socket) => {
                     // as many times as necessary, to make it unique
                     for(let i = 0; i < room.players.length; i++)
                     {
-                        if(room.players[i].player == new_joiner_name){
-                            new_joiner_name = '' + new_joiner_name + room._id;
+                        if(room.players[i].username == new_joiner_name){
+                            new_joiner_name += "-" + (room._id).substring(0,5)
                         }
                     }
 
                     socket.join(room._id);
-                    db.update({ _id: room._id }, { $push: { players: {username: new_joiner_name, score: 0} } }, {}, function () {
-                        // todo: increment num_players
-                        db.findOne({_id: room._id}, function (err, updatedRoom) {
-                            if(!err){
-                                io.in(room._id).emit('joined_room', {
-                                    id: room._id,
-                                    original_joiner_name: joiner,
-                                    new_joiner_name: new_joiner_name,
-                                    players: updatedRoom.players
-                                })
-                            }else{
-                                console.log(err)
-                            }
-                        });
+                    db.update({ _id: room._id }, { $push: { players: {username: new_joiner_name, score: 0} }, $set: {num_players: room.num_players+1} }, {}, function () {
+                        // increment num_players
+                            db.findOne({_id: room._id}, function (err, updatedRoom) {
+                                if(!err){
+                                    // send to client new player list with new player inside
+                                    io.in(room._id).emit('joined_room', {
+                                        id: room._id,
+                                        original_joiner_name: joiner,
+                                        new_joiner_name: new_joiner_name,
+                                        players: updatedRoom.players
+                                    })
+                                }else{
+                                    console.log(err)
+                                }
+                            });
 
                       });
                 }else{

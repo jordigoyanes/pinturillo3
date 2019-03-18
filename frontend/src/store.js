@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    socket: io("https://pinturillo3.herokuapp.com"),
+    socket: io("localhost:3000"),
     localPlayer: null,
     isLoggedIn: false,
     room_id: null,
@@ -14,6 +14,14 @@ export default new Vuex.Store({
   mutations: {
     set_localplayer(state, payload) {
       state.localPlayer = payload;
+    },
+    set_score(state, payload){
+      let players=state.players;
+      for(let i=0; i< players.length;i++){
+        if(players[i].username == payload.username){
+          players[i].score += payload.score
+        }
+      }
     },
     set_room_id(state, payload){
       state.room_id = payload;
