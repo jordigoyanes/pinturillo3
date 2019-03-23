@@ -54,7 +54,7 @@ export default {
   },
   data: function() {
     return {
-      localPlayer: "",
+      localPlayer: "player",
       showErr: false
     };
   },

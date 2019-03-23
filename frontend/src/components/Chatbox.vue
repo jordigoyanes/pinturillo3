@@ -44,6 +44,7 @@ export default {
     send_message: function() {
       if (this.guess != "") {
         this.socket.emit("new_message", {
+          room_id: this.room_id,
           username: this.localPlayer,
           message: this.guess
         });
@@ -59,7 +60,8 @@ export default {
   computed: {
     ...mapState({
       socket: "socket",
-      localPlayer: "localPlayer"
+      localPlayer: "localPlayer",
+      room_id: "room_id"
     })
   }
 };

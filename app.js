@@ -28,25 +28,37 @@ const io = require("socket.io")(server)
 
 //listen on every connection
 io.on('connection', (socket) => {
+    // TODO: call leave when disconnect
     console.log('New player connected')
 
     socket.on('leave', function(data) {
-        db.findOne({_id: data.room_id}, function (err, room) {
-            if(err){
-                console.log(err)
+        let room_id = data.room_id;
+
+        db.findOne({_id: room_id}, function(err,room){
+            if(room.num_players - 1 == 0){
+                db.remove({ _id: room_id }, {}, function (err, numRemoved) {
+                    if(err){
+                        console.log(err)
+                    }else{
+                        console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")
+                    }
+                });
             }else{
-                db.update({ _id: data.room_id }, { $pull: { players: {username: data.username} }, $set: {num_players: room.num_players-1} }, {}, function () {
-                    socket.leave(data.room_id); 
-                    db.findOne({_id: data.room_id}, function (err, updatedRoom) {
-                        io.in(updatedRoom._id).emit('left_room', {
-                            players: updatedRoom.players
-                        })
+                db.update({ _id: room_id }, { $pull: { players: {username: data.username} }, $set: {num_players: room.num_players-1} }, {}, function () {
+                    socket.leave(room_id); 
+                    db.findOne({_id: room_id}, function (err, updatedRoom) {
+                        if(!err){
+                            io.in(updatedRoom._id).emit('left_room', {
+                                players: updatedRoom.players
+                            })
+                        }else{
+                            console.log(err);
+                        }
                     });
-                    console.log("player removed from room id: " + data.room_id);
                 });
             }
-        });
-        
+        })
+
     })
 
     socket.on('create_room', (data) => {
@@ -80,7 +92,7 @@ io.on('connection', (socket) => {
     socket.on('join_public_room', async (data) =>{
         //join public room, only takes username
         var joiner = data.player;
-        await db.find({room_type: 'public', num_players: { $lt: MAX_PLAYERS}}, function (err, docs) {
+        await db.find({room_type: "public", num_players: { $lt: MAX_PLAYERS}}, function (err, docs) {
             if(err){
                 console.log(err)
             }else{
@@ -102,6 +114,7 @@ io.on('connection', (socket) => {
                         // increment num_players
                             db.findOne({_id: room._id}, function (err, updatedRoom) {
                                 if(!err){
+                                    io.sockets.adapter.rooms[room._id].room_id = room._id;
                                     // send to client new player list with new player inside
                                     io.in(room._id).emit('joined_room', {
                                         id: room._id,
@@ -114,7 +127,7 @@ io.on('connection', (socket) => {
                                 }
                             });
 
-                      });
+                    });
                 }else{
                     // create room and join creator in
                     let room = {
@@ -151,7 +164,6 @@ io.on('connection', (socket) => {
     });
 
     // emit countdown time event (3-2-1) before painter starts drawing.
-
     socket.on('leave_room', (data) =>{
         //if 0 players, remove room from db
         socket.broadcast.emit('leave_room', data);
@@ -173,5 +185,11 @@ io.on('connection', (socket) => {
         //broadcast the new message to others if it doesn't match word.
         io.sockets.emit('new_message', {message : data.message, username : data.username});
     })
+    socket.on('disconnect', function() {
+        console.log('This is room id variable: '+ );
+  
+        var i = allClients.indexOf(socket);
+        allClients.splice(i, 1);
+     });
 })
 
