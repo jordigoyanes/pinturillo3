@@ -58,11 +58,11 @@ export default {
       this.$router.push({ name: "home" });
     },
     ...mapMutations({
-      set_room_id: 'set_room_id',
-      set_playerlist: 'set_playerlist',
-      set_logged: 'set_logged',
-      set_score: 'set_score'
-    }),
+      set_room_id: "set_room_id",
+      set_playerlist: "set_playerlist",
+      set_logged: "set_logged",
+      set_score: "set_score"
+    })
   },
   computed: {
     ...mapState({
@@ -72,12 +72,11 @@ export default {
       players: "players"
     })
   },
-  mounted(){
-    this.socket.on("left_room", (newData) => {
+  mounted() {
+    this.socket.on("left_room", newData => {
       this.set_playerlist(newData.players);
-      console.log("this is the new data: "+JSON.stringify(newData.players))
-    })
-
+      console.log("this is the new data: " + JSON.stringify(newData.players));
+    });
   }
 };
 </script>

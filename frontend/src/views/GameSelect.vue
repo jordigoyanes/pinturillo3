@@ -55,29 +55,28 @@ export default {
       this.$router.push({ name: "private" });
     },
     ...mapActions({
-      join_public_room: 'join_public_room'
+      join_public_room: "join_public_room"
     }),
     ...mapMutations({
-      set_room_id: 'set_room_id',
-      set_playerlist: 'set_playerlist',
-      set_logged: 'set_logged',
-      set_localplayer: 'set_localplayer',
-    }),
+      set_room_id: "set_room_id",
+      set_playerlist: "set_playerlist",
+      set_logged: "set_logged",
+      set_localplayer: "set_localplayer"
+    })
   },
   mounted() {
-    this.socket.on("joined_room", (room) => {
-      this.set_playerlist(room.players)
-      console.log("this is the new data: "+JSON.stringify(newData.players))
+    this.socket.on("joined_room", room => {
+      this.set_playerlist(room.players);
     });
-    this.socket.on("user_join", (room) => {
-        console.log("this is original: "+room.original_joiner_name)
-        console.log("this is new joiner name: "+room.new_joiner_name)
+    this.socket.on("user_join", room => {
+      console.log("this is original: " + room.original_joiner_name);
+      console.log("this is new joiner name: " + room.new_joiner_name);
 
-        this.set_localplayer(room.new_joiner_name);
-        this.set_logged(true);
-        this.set_room_id(room.id);
-        this.set_playerlist(room.players)
-        this.$router.push({ path: "/room/" +  this.room_id});     
+      this.set_localplayer(room.new_joiner_name);
+      this.set_logged(true);
+      this.set_room_id(room.id);
+      this.set_playerlist(room.players);
+      this.$router.push({ path: "/room/" + this.room_id });
     });
   },
   computed: {

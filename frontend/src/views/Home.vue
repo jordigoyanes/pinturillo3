@@ -71,8 +71,6 @@ export default {
       set_localplayer: "set_localplayer"
     })
   },
-  computed: {
-    
-  }
+  computed: {}
 };
 </script>
