@@ -20,7 +20,6 @@
             <div class="box">
               usuarios y puntuacion
               <Scores />
-              <button class="button is-primary" @click="set_score({score: 10, username: localPlayer})">Increment my score(clientside only)</button>
             </div>
           </div>
           <div class="column is-half">
@@ -54,7 +53,7 @@ export default {
   },
   methods: {
     leave() {
-      this.socket.emit("leave",{room_id: this.room_id, username: this.localPlayer});
+      this.socket.emit("disconnect");
       this.set_logged(false);
       this.$router.push({ name: "home" });
     },
@@ -71,12 +70,12 @@ export default {
       room_id: "room_id",
       localPlayer: "localPlayer",
       players: "players"
-
     })
   },
   mounted(){
     this.socket.on("left_room", (newData) => {
-      this.set_playerlist(newData.players)
+      this.set_playerlist(newData.players);
+      console.log("this is the new data: "+JSON.stringify(newData.players))
     })
 
   }

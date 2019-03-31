@@ -32,7 +32,9 @@ io.on('connection', (socket) => {
     console.log('New player connected')
 
     socket.on('leave', function(data) {
+        console.log("something?")
         let room_id = data.room_id;
+        console.log("player: "+data.username+" left room "+room_id)
 
         db.findOne({_id: room_id}, function(err,room){
             if(room.num_players - 1 == 0){
@@ -40,6 +42,7 @@ io.on('connection', (socket) => {
                     if(err){
                         console.log(err)
                     }else{
+                        socket.isInRoom=false;
                         console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")
                     }
                 });
@@ -47,12 +50,13 @@ io.on('connection', (socket) => {
                 db.update({ _id: room_id }, { $pull: { players: {username: data.username} }, $set: {num_players: room.num_players-1} }, {}, function () {
                     socket.leave(room_id); 
                     db.findOne({_id: room_id}, function (err, updatedRoom) {
-                        if(!err){
-                            io.in(updatedRoom._id).emit('left_room', {
+                        if(err){
+                            console.log(err)
+                        }else{
+                            io.in(room_id).emit('left_room', {
                                 players: updatedRoom.players
                             })
-                        }else{
-                            console.log(err);
+                            socket.isInRoom=false;
                         }
                     });
                 });
@@ -108,16 +112,22 @@ io.on('connection', (socket) => {
                             new_joiner_name += "-" + (room._id).substring(0,5)
                         }
                     }
-
+                    // make socket join room so only this socket gets notified of 'joined_room'
                     socket.join(room._id);
                     db.update({ _id: room._id }, { $push: { players: {username: new_joiner_name, score: 0} }, $set: {num_players: room.num_players+1} }, {}, function () {
-                        // increment num_players
+                        
                             db.findOne({_id: room._id}, function (err, updatedRoom) {
                                 if(!err){
-                                    io.sockets.adapter.rooms[room._id].room_id = room._id;
+                                    // io.sockets.adapter.rooms[room._id].room_id = room._id;
                                     // send to client new player list with new player inside
+                                    socket.username=new_joiner_name;
+                                    socket.room_id=room._id;
+                                    socket.isInRoom=true;
                                     io.in(room._id).emit('joined_room', {
-                                        id: room._id,
+                                        players:  updatedRoom.players,
+                                    })
+                                    socket.emit('user_join', {
+                                        id: updatedRoom._id,
                                         original_joiner_name: joiner,
                                         new_joiner_name: new_joiner_name,
                                         players: updatedRoom.players
@@ -129,7 +139,7 @@ io.on('connection', (socket) => {
 
                     });
                 }else{
-                    // create room and join creator in
+                    // create new public room and join in the first player
                     let room = {
                     room_type: 'public',
                     room_language: "Español",
@@ -147,12 +157,19 @@ io.on('connection', (socket) => {
                         console.log(err)
                         }else{
                             socket.join(newRoom._id);
+                            socket.username=joiner;
+                            socket.room_id=newRoom._id;
+                            socket.isInRoom=true;
                             io.in(newRoom._id).emit('joined_room', {
+                                players:  room.players,
+                            })
+                            socket.emit('user_join', {
                                 id: newRoom._id,
                                 original_joiner_name: joiner,
                                 new_joiner_name: joiner,
                                 players:  room.players,
                             })
+                
                         }
                     });
                 }
@@ -162,12 +179,6 @@ io.on('connection', (socket) => {
         });
         
     });
-
-    // emit countdown time event (3-2-1) before painter starts drawing.
-    socket.on('leave_room', (data) =>{
-        //if 0 players, remove room from db
-        socket.broadcast.emit('leave_room', data);
-    }) 
 
     
     socket.on('player_guessed', (data) =>{
@@ -184,12 +195,41 @@ io.on('connection', (socket) => {
         
         //broadcast the new message to others if it doesn't match word.
         io.sockets.emit('new_message', {message : data.message, username : data.username});
-    })
+    });
+
     socket.on('disconnect', function() {
-        console.log('This is room id variable: '+ );
-  
-        var i = allClients.indexOf(socket);
-        allClients.splice(i, 1);
+        console.log('someone left: '+socket.username+ " room id: "+socket.room_id+ "isInroom: "+socket.isInRoom)
+        if(socket.isInRoom){
+            let room_id = socket.room_id;
+            console.log("player: "+socket.username+" left room "+room_id)
+    
+            db.findOne({_id: room_id}, function(err,room){
+                if(room.num_players - 1 == 0){
+                    db.remove({ _id: room_id }, {}, function (err, numRemoved) {
+                        if(err){
+                            console.log(err)
+                        }else{
+                            socket.isInRoom=false;
+                            console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")
+                        }
+                    });
+                }else{
+                    db.update({ _id: room_id }, { $pull: { players: {username: socket.username} }, $set: {num_players: room.num_players-1} }, {}, function () {
+                        socket.leave(room_id); 
+                        db.findOne({_id: room_id}, function (err, updatedRoom) {
+                            if(err){
+                                console.log(err)
+                            }else{
+                                io.in(room_id).emit('left_room', {
+                                    players: updatedRoom.players
+                                })
+                                socket.isInRoom=false;
+                            }
+                        });
+                    });
+                }
+            })
+        }
      });
 })
 

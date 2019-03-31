@@ -16,10 +16,10 @@ export default new Vuex.Store({
       state.localPlayer = payload;
     },
     set_score(state, payload){
-      let players=state.players;
-      for(let i=0; i< players.length;i++){
-        if(players[i].username == payload.username){
-          players[i].score += payload.score
+      let players = state.players;
+      for (let i = 0; i < players.length; i++) {
+        if (players[i].username === payload.username) {
+          players[i].score += payload.score;
         }
       }
     },
