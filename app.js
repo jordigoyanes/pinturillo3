@@ -209,6 +209,9 @@ io.on('connection', (socket) => {
                         if(err){
                             console.log(err)
                         }else{
+                            io.in(room_id).emit('left_room', {
+                                players: updatedRoom.players
+                            })
                             socket.isInRoom=false;
                             console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")
                         }
