@@ -210,7 +210,7 @@ io.on('connection', (socket) => {
                             console.log(err)
                         }else{
                             io.in(room_id).emit('left_room', {
-                                players: updatedRoom.players
+                                players: room.players
                             })
                             socket.isInRoom=false;
                             console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")

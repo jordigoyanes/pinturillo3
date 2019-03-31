@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     leave() {
-      this.socket.emit("disconnect");
+      this.socket.disconnect();
       this.set_logged(false);
       this.$router.push({ name: "home" });
     },

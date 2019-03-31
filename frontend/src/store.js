@@ -2,10 +2,11 @@ import Vue from "vue";
 import Vuex from "vuex";
 import io from "socket.io-client";
 Vue.use(Vuex);
-
+// "pinturillo3.herokuapp.com"
+// "localhost:3000"
 export default new Vuex.Store({
   state: {
-    socket: io("https://pinturillo3.herokuapp.com"),
+    socket: io("pinturillo3.herokuapp.com"),
     localPlayer: null,
     isLoggedIn: false,
     room_id: null,
