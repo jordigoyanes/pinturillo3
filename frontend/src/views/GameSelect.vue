@@ -65,6 +65,9 @@ export default {
     })
   },
   mounted() {
+    if(!this.socket.connected){
+        this.socket.connect()
+    }
     this.socket.on("joined_room", room => {
       this.set_playerlist(room.players);
     });
@@ -76,6 +79,7 @@ export default {
       this.set_logged(true);
       this.set_room_id(room.id);
       this.set_playerlist(room.players);
+
       this.$router.push({ path: "/room/" + this.room_id });
     });
   },

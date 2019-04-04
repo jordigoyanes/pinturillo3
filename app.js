@@ -21,7 +21,7 @@ app.get('*', function (request, response) {
 server = app.listen(process.env.PORT || 3000)
 
 // pinturillo constants
-const MAX_PLAYERS = 10;
+const MAX_PLAYERS = 3;
 
 //socket.io instantiation
 const io = require("socket.io")(server) 
@@ -32,7 +32,6 @@ io.on('connection', (socket) => {
     console.log('New player connected')
 
     socket.on('leave', function(data) {
-        console.log("something?")
         let room_id = data.room_id;
         console.log("player: "+data.username+" left room "+room_id)
 
@@ -188,13 +187,13 @@ io.on('connection', (socket) => {
     }) 
 
     //drawing
-    socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));  
+    socket.on('drawing', (data) => io.in(socket.room_id).emit('drawing', data));  
 
     //chat messages 
     socket.on('new_message', (data) => {
         
-        //broadcast the new message to others if it doesn't match word.
-        io.sockets.emit('new_message', {message : data.message, username : data.username});
+        //broadcast the new message to others if it doesn't match word (in the same room).
+        io.in(socket.room_id).emit('new_message', {message : data.message, username : data.username});
     });
 
     socket.on('disconnect', function() {
@@ -210,7 +209,7 @@ io.on('connection', (socket) => {
                             console.log(err)
                         }else{
                             io.in(room_id).emit('left_room', {
-                                players: room.players
+                                players: []
                             })
                             socket.isInRoom=false;
                             console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")

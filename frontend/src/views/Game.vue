@@ -1,15 +1,18 @@
 <template>
   <div>
-    <section class="section has-background-warning">
+    <section class="section has-background-danger">
       <div class="level">
         <div class="level-item level-left">
-          <button @click="leave()" class="button is-danger">Leave Room</button>
+          <button @click="leave()" class="button is-warning">Leave Room</button>
         </div>
-        <h1 class="is-size-3 level-item has-text-centered">
+        <h1 id="game-title" class="is-size-3 level-item has-text-centered">
           Pinturillo 3
         </h1>
         <div class="level-item level-right">
-          <h4 class="title is-size-4">Room ID: {{ this.room_id }}</h4>
+          <div class="tags has-addons">
+            <span class="tag is-dark">room id</span>
+            <span class="tag is-warning">{{ this.room_id }}</span>
+          </div>
         </div>
       </div>
     </section>
@@ -55,13 +58,17 @@ export default {
     leave() {
       this.socket.disconnect();
       this.set_logged(false);
+      this.set_playerlist(null);
+      this.set_localplayer(null);
+      this.set_room_id(null);
       this.$router.push({ name: "home" });
     },
     ...mapMutations({
       set_room_id: "set_room_id",
       set_playerlist: "set_playerlist",
       set_logged: "set_logged",
-      set_score: "set_score"
+      set_score: "set_score",
+      set_localplayer: "set_localplayer"
     })
   },
   computed: {
@@ -73,6 +80,7 @@ export default {
     })
   },
   mounted() {
+    // other players listen
     this.socket.on("left_room", newData => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
@@ -93,6 +101,10 @@ export default {
   color: #ff3860;
   padding: 0;
   min-height: 800px;
+}
+#game-title{
+  font-weight: bold;
+  color:white;
 }
 #game-columns {
   padding: 0.8rem 1.5rem;
