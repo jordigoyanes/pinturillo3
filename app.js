@@ -195,6 +195,21 @@ io.on('connection', (socket) => {
         //broadcast the new message to others if it doesn't match word (in the same room).
         io.in(socket.room_id).emit('new_message', {message : data.message, username : data.username});
     });
+    // CHAT EVENTS (emitted from the server only)
+    /*  
+        data example:
+        data = {message: "pablo is going to draw", evt_type: " " }
+        Types of chat events:
+            guessed_word
+            reported
+            going_to_draw
+            player_left
+            player_joined
+    */
+    socket.on('chat_evt', (data) => {
+        
+        io.in(socket.room_id).emit('chat_evt', {message : data.message, evt_type : data.evt_type});
+    });
 
     socket.on('disconnect', function() {
         console.log('someone left: '+socket.username+ " room id: "+socket.room_id+ "isInroom: "+socket.isInRoom)

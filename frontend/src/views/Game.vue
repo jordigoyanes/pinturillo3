@@ -102,9 +102,9 @@ export default {
   padding: 0;
   min-height: 800px;
 }
-#game-title{
+#game-title {
   font-weight: bold;
-  color:white;
+  color: white;
 }
 #game-columns {
   padding: 0.8rem 1.5rem;

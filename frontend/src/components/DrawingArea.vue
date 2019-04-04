@@ -18,7 +18,7 @@ export default {
       rect: null,
       drawing: false,
       current: {
-        color: "red",
+        color: "black",
         lineWidth: 2,
         x: 0,
         y: 0
@@ -31,6 +31,13 @@ export default {
     })
   },
   methods: {
+    switch_color(color) {
+      switch (color) {
+        case "red":
+          console.log("hi");
+          break;
+      }
+    },
     onMouseDown(e) {
       /*
         this.xCoord = e.pageX - this.canvas.offsetLeft;

@@ -65,8 +65,8 @@ export default {
     })
   },
   mounted() {
-    if(!this.socket.connected){
-        this.socket.connect()
+    if (!this.socket.connected) {
+      this.socket.connect();
     }
     this.socket.on("joined_room", room => {
       this.set_playerlist(room.players);

@@ -46,7 +46,11 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name != "home" && !store.state.localPlayer) {
+  if (
+    to.name != "home" &&
+    !store.state.localPlayer &&
+    !store.state.isLoggedIn
+  ) {
     next({
       path: "/"
     });
