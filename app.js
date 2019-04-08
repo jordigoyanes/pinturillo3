@@ -22,6 +22,7 @@ server = app.listen(process.env.PORT || 3000)
 
 // pinturillo constants
 const MAX_PLAYERS = 3;
+const TIME_LIMIT = 99;
 
 //socket.io instantiation
 const io = require("socket.io")(server) 
@@ -30,39 +31,6 @@ const io = require("socket.io")(server)
 io.on('connection', (socket) => {
     // TODO: call leave when disconnect
     console.log('New player connected')
-
-    socket.on('leave', function(data) {
-        let room_id = data.room_id;
-        console.log("player: "+data.username+" left room "+room_id)
-
-        db.findOne({_id: room_id}, function(err,room){
-            if(room.num_players - 1 == 0){
-                db.remove({ _id: room_id }, {}, function (err, numRemoved) {
-                    if(err){
-                        console.log(err)
-                    }else{
-                        socket.isInRoom=false;
-                        console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")
-                    }
-                });
-            }else{
-                db.update({ _id: room_id }, { $pull: { players: {username: data.username} }, $set: {num_players: room.num_players-1} }, {}, function () {
-                    socket.leave(room_id); 
-                    db.findOne({_id: room_id}, function (err, updatedRoom) {
-                        if(err){
-                            console.log(err)
-                        }else{
-                            io.in(room_id).emit('left_room', {
-                                players: updatedRoom.players
-                            })
-                            socket.isInRoom=false;
-                        }
-                    });
-                });
-            }
-        })
-
-    })
 
     socket.on('create_room', (data) => {
         // Create private room in db:
@@ -95,7 +63,7 @@ io.on('connection', (socket) => {
     socket.on('join_public_room', async (data) =>{
         //join public room, only takes username
         var joiner = data.player;
-        await db.find({room_type: "public", num_players: { $lt: MAX_PLAYERS}}, function (err, docs) {
+        await db.find({room_type: "public", room_language: data.locale , num_players: { $lt: MAX_PLAYERS}}, function (err, docs) {
             if(err){
                 console.log(err)
             }else{
@@ -119,9 +87,9 @@ io.on('connection', (socket) => {
                                 if(!err){
                                     // io.sockets.adapter.rooms[room._id].room_id = room._id;
                                     // send to client new player list with new player inside
-                                    socket.username=new_joiner_name;
-                                    socket.room_id=room._id;
-                                    socket.isInRoom=true;
+                                    socket.username = new_joiner_name;
+                                    socket.room_id = room._id;
+                                    socket.isInRoom = true;
                                     io.in(room._id).emit('joined_room', {
                                         players:  updatedRoom.players,
                                     })
@@ -130,6 +98,10 @@ io.on('connection', (socket) => {
                                         original_joiner_name: joiner,
                                         new_joiner_name: new_joiner_name,
                                         players: updatedRoom.players
+                                    })
+                                    io.in(room._id).emit('chat_evt', {
+                                        evt_type: "player_joined",
+                                        username: new_joiner_name
                                     })
                                 }else{
                                     console.log(err)
@@ -141,7 +113,7 @@ io.on('connection', (socket) => {
                     // create new public room and join in the first player
                     let room = {
                     room_type: 'public',
-                    room_language: "Español",
+                    room_language: data.locale,
                     num_players: 1,
                     players:[
                     {username: joiner, score: 0},
@@ -167,6 +139,10 @@ io.on('connection', (socket) => {
                                 original_joiner_name: joiner,
                                 new_joiner_name: joiner,
                                 players:  room.players,
+                            })
+                            io.in(newRoom._id).emit('chat_evt', {
+                                evt_type: "player_joined",
+                                username: joiner
                             })
                 
                         }
@@ -207,8 +183,7 @@ io.on('connection', (socket) => {
             player_joined
     */
     socket.on('chat_evt', (data) => {
-        
-        io.in(socket.room_id).emit('chat_evt', {message : data.message, evt_type : data.evt_type});
+        io.in(socket.room_id).emit('chat_evt', data);
     });
 
     socket.on('disconnect', function() {
@@ -239,6 +214,10 @@ io.on('connection', (socket) => {
                             }else{
                                 io.in(room_id).emit('left_room', {
                                     players: updatedRoom.players
+                                })
+                                io.in(room_id).emit("chat_evt", {
+                                    evt_type: "player_left",
+                                    username: socket.username
                                 })
                                 socket.isInRoom=false;
                             }

@@ -4,10 +4,16 @@
       <div class="chatbox">
         <ul>
           <li v-for="(chatmsg, index) in chat_messages" :key="index">
-            <p>
-              <strong>{{ chatmsg.username }}</strong
-              >: {{ chatmsg.message }}
-            </p>
+            <div v-if="chatmsg.type == 'evt'">
+              <span :class="chatmsg.evt_type"></span>
+              <p class="evt">{{ chatmsg.message }}</p>
+            </div>
+            <div v-else>
+              <p>
+                <strong>{{ chatmsg.username }}</strong
+                >: {{ chatmsg.message }}
+              </p>
+            </div>
           </li>
         </ul>
       </div>
@@ -28,6 +34,7 @@
 
 <script>
 import { mapState } from "vuex";
+import i18n from "@/plugins/i18n";
 
 export default {
   name: "Chatbox",
@@ -44,7 +51,6 @@ export default {
     send_message: function() {
       if (this.guess != "") {
         this.socket.emit("new_message", {
-          room_id: this.room_id,
           username: this.localPlayer,
           message: this.guess
         });
@@ -54,6 +60,28 @@ export default {
   },
   mounted() {
     this.socket.on("new_message", data => {
+      this.chat_messages = [...this.chat_messages, data];
+    });
+    this.socket.on("chat_evt", data => {
+      console.log("este es evt_type: "+data.evt_type)
+      switch(data.evt_type){
+        case "player_joined":
+          data.message = data.username + i18n.t('chat_evt.player_joined');
+          break;
+        case "player_left":
+          data.message = data.username + i18n.t('chat_evt.player_left');
+          break;
+        case "guessed_word":
+          data.message = data.username + i18n.t('chat_evt.guessed_word');
+          break;
+        case "reported":
+          data.message = i18n.t('chat_evt.reported');
+          break;
+        case "going_to_draw":
+          data.message = data.username + i18n.t('chat_evt.going_to_draw');
+          break;
+      }
+      data.type = "evt";
       this.chat_messages = [...this.chat_messages, data];
     });
   },
@@ -71,5 +99,9 @@ export default {
   min-height: 200px;
   max-height: 200px;
   overflow: auto;
+}
+.evt {
+  font-weight: bold;
+  color: orange;
 }
 </style>

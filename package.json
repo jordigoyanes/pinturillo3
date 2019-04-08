@@ -19,5 +19,8 @@
     "nodemon": "^1.14.3",
     "path": "^0.12.7",
     "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
   }
 }

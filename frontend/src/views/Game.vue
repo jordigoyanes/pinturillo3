@@ -1,17 +1,17 @@
 <template>
   <div>
-    <section class="section has-background-danger">
+    <section class="section has-background-info">
       <div class="level">
         <div class="level-item level-left">
-          <button @click="leave()" class="button is-warning">Leave Room</button>
+          <button @click="leave()" class="button is-dark ">{{ $t("leave_room") }}</button>
         </div>
         <h1 id="game-title" class="is-size-3 level-item has-text-centered">
           Pinturillo 3
         </h1>
         <div class="level-item level-right">
           <div class="tags has-addons">
-            <span class="tag is-dark">room id</span>
-            <span class="tag is-warning">{{ this.room_id }}</span>
+            <span class="tag is-dark">Room ID</span>
+            <span class="tag is-success">{{ this.room_id }}</span>
           </div>
         </div>
       </div>

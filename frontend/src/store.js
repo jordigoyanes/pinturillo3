@@ -6,7 +6,7 @@ Vue.use(Vuex);
 // "localhost:3000"
 export default new Vuex.Store({
   state: {
-    socket: io("pinturillo3.herokuapp.com"),
+    socket: io("https://pinturillo3.herokuapp.com"),
     localPlayer: null,
     isLoggedIn: false,
     room_id: null,

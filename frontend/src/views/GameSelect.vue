@@ -9,7 +9,7 @@
               class="box has-background-success game-select"
               @click="goPublic()"
             >
-              <h1 class=" is-size-1 has-text-centered">Play public</h1>
+              <h1 class=" is-size-1 has-text-centered">{{ $t("play_public") }}</h1>
             </div>
           </div>
           <div class="column">
@@ -17,7 +17,7 @@
               class="box has-background-warning game-select"
               @click="goPrivate()"
             >
-              <h1 class=" is-size-1 has-text-centered">Private Room</h1>
+              <h1 class=" is-size-1 has-text-centered">{{ $t("play_private") }}</h1>
             </div>
           </div>
         </div>
@@ -31,6 +31,7 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import i18n from "@/plugins/i18n";
 import Footer from "@/components/Footer";
 export default {
   components: {
@@ -41,14 +42,16 @@ export default {
       showErr: false,
       room_name: "",
       room_password: "",
-      isLoading: false
+      isLoading: false,
+      i18n: i18n
     };
   },
   methods: {
     goPublic() {
       this.isLoading = true;
       this.socket.emit("join_public_room", {
-        player: this.localPlayer
+        player: this.localPlayer,
+        locale: this.i18n.locale
       });
     },
     goPrivate() {

@@ -11,7 +11,7 @@
             </div>
             <div class="box">
               <div class="field">
-                <label class="label">Nick:</label>
+                <label class="label">{{$t("nickname") }}</label>
                 <div class="control">
                   <input
                     @keyup.enter="verify_user()"
@@ -24,8 +24,9 @@
               </div>
               <div class="field">
                 <div class="select is-info">
-                  <select>
+                  <select v-model="i18n.locale">
                     <option>Español</option>
+                    <option>English</option>
                   </select>
                 </div>
               </div>
@@ -33,7 +34,7 @@
                 @click="verify_user()"
                 class="button is-large is-fullwidth is-success is-outlined"
               >
-                <p>Play!</p>
+                <p>{{ $t("play") }}</p>
               </button>
             </div>
           </div>
@@ -45,6 +46,7 @@
 </template>
 
 <script>
+import i18n from "@/plugins/i18n";
 import { mapMutations } from "vuex";
 import Footer from "@/components/Footer";
 export default {
@@ -55,7 +57,9 @@ export default {
   data: function() {
     return {
       localPlayer: "player",
-      showErr: false
+      showErr: false,
+      lang: "Español",
+      i18n: i18n
     };
   },
   methods: {
