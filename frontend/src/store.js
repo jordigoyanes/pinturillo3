@@ -1,16 +1,19 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import io from "socket.io-client";
+import i18n from "@/plugins/i18n";
+
 Vue.use(Vuex);
 // "pinturillo3.herokuapp.com"
 // "localhost:3000"
 export default new Vuex.Store({
   state: {
-    socket: io("https://pinturillo3.herokuapp.com"),
+    socket: io("pinturillo3.herokuapp.com"),
     localPlayer: null,
     isLoggedIn: false,
     room_id: null,
-    players: null
+    players: null,
+    i18n: i18n
   },
   mutations: {
     set_localplayer(state, payload) {

@@ -9,7 +9,9 @@
               class="box has-background-success game-select"
               @click="goPublic()"
             >
-              <h1 class=" is-size-1 has-text-centered">{{ $t("play_public") }}</h1>
+              <h1 class=" is-size-1 has-text-centered">
+                {{ $t("play_public") }}
+              </h1>
             </div>
           </div>
           <div class="column">
@@ -17,7 +19,9 @@
               class="box has-background-warning game-select"
               @click="goPrivate()"
             >
-              <h1 class=" is-size-1 has-text-centered">{{ $t("play_private") }}</h1>
+              <h1 class=" is-size-1 has-text-centered">
+                {{ $t("play_private") }}
+              </h1>
             </div>
           </div>
         </div>

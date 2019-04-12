@@ -11,7 +11,7 @@
             </div>
             <div class="box">
               <div class="field">
-                <label class="label">{{$t("nickname") }}</label>
+                <label class="label">{{ $t("nickname") }}</label>
                 <div class="control">
                   <input
                     @keyup.enter="verify_user()"

@@ -8,7 +8,7 @@ const messages = {
     nickname: "Nickname:",
     play: "Play!",
     leave_room: "Leave Room",
-    enter_guess: "enter_guess",
+    enter_guess: "Enter guess...",
     play_public: "Public Room",
     play_private: "Private Room",
     chat_evt: {

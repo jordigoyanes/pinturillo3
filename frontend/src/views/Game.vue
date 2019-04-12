@@ -3,7 +3,9 @@
     <section class="section has-background-info">
       <div class="level">
         <div class="level-item level-left">
-          <button @click="leave()" class="button is-dark ">{{ $t("leave_room") }}</button>
+          <button @click="leave()" class="button is-dark ">
+            {{ $t("leave_room") }}
+          </button>
         </div>
         <h1 id="game-title" class="is-size-3 level-item has-text-centered">
           Pinturillo 3
