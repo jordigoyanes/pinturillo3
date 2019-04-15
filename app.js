@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express();
 const path = require('path');
+var genWords = require('./genWords.js');
 var Datastore = require('nedb')
   , db = new Datastore({ 
     filename: './rooms.db', 
@@ -29,7 +30,9 @@ const io = require("socket.io")(server)
 
 //listen on every connection
 io.on('connection', (socket) => {
-    // TODO: call leave when disconnect
+    // ROUND handling
+
+    // USER 
     console.log('New player connected')
 
     socket.on('create_room', (data) => {

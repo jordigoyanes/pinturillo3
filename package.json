@@ -18,6 +18,8 @@
     "nedb": "^1.8.0",
     "nodemon": "^1.14.3",
     "path": "^0.12.7",
+    "random-spanish-words": "^2.0.0",
+    "random-words": "^1.1.0",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
