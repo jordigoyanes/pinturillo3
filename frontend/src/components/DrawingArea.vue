@@ -122,8 +122,8 @@ export default {
     this.context.lineWidth = this.lineWidth;
     this.context.lineCap = "round";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    window.addEventListener("resize", this.onResize, false);
-    this.onResize();
+    //window.addEventListener("resize", this.onResize, false);
+    //this.onResize();
     this.socket.on("drawing", this.onDrawingEvent);
   }
 };

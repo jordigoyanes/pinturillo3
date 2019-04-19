@@ -31,7 +31,11 @@ const io = require("socket.io")(server)
 //listen on every connection
 io.on('connection', (socket) => {
     // ROUND handling
-
+    // wait to next round
+    socket.on('turn_start', (data) => {
+        
+    })
+    
     // USER 
     console.log('New player connected')
 
@@ -43,7 +47,6 @@ io.on('connection', (socket) => {
             room_password: data.password,
             players:[
                 {username: data.creator_player, score: 0},
-
             ],
             currentWord: 'hola',
             currentPainter: 'username',
@@ -106,6 +109,10 @@ io.on('connection', (socket) => {
                                         evt_type: "player_joined",
                                         username: new_joiner_name
                                     })
+                                    socket.is_waiting_next_round=true;
+                                    
+                                    socket.emit('wait_next_round');
+
                                 }else{
                                     console.log(err)
                                 }
@@ -114,6 +121,7 @@ io.on('connection', (socket) => {
                     });
                 }else{
                     // create new public room and join in the first player
+                    // start the game with rounds
                     let room = {
                     room_type: 'public',
                     room_language: data.locale,

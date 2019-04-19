@@ -19,27 +19,38 @@
       </div>
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
-      <div id="game-columns">
-        <div class="columns">
-          <div class="column is-one-fifth">
-            <div class="box">
-              usuarios y puntuacion
-              <Scores />
-            </div>
+      <div id="game-columns" class="grid">
+        <div class="game-column span-col-2">
+          <Scores />
+        </div>
+        <div class="game-column span-col-5">
+          <DrawingArea />
+        </div>
+        <div class="game-column span-col-3">
+          <Chatbox />
+        </div>
+      </div>
+      <!-- 
+      <div id="game-columns" class="columns">
+        <div class="column is-one-fifth">
+          <div id="score-bar" class="box">
+            usuarios y puntuacion
+            <Scores />
           </div>
-          <div class="column is-half">
-            <div id="canvas-wrapper">
-              <DrawingArea />
-            </div>
+        </div>
+        <div class="column is-half">
+          <div id="canvas-wrapper">
+            <DrawingArea />
           </div>
-          <div class="column">
-            <div class="box">
-              <p class="is-primary">chat</p>
-              <Chatbox />
-            </div>
+        </div>
+        <div class="column">
+          <div id="chat-bar" class="box">
+            <p class="is-primary">chat</p>
+            <Chatbox />
           </div>
         </div>
       </div>
+      -->
     </div>
   </div>
 </template>
@@ -51,6 +62,11 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "game",
+  data: function() {
+    return {
+      isWaitingNextTurn: true
+    };
+  },
   components: {
     DrawingArea,
     Chatbox,
@@ -82,8 +98,11 @@ export default {
     })
   },
   mounted() {
-    // other players listen
     this.socket.on("left_room", newData => {
+      this.set_playerlist(newData.players);
+      console.log("this is the new data: " + JSON.stringify(newData.players));
+    });
+    this.socket.on("wait_next_turn", newData => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
@@ -92,24 +111,39 @@ export default {
 </script>
 
 <style lang="scss">
-#canvas-wrapper {
-  flex: 1;
-  display: flex;
+
+.game-column {
   background-color: white;
   border-radius: 6px;
   -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1),
     0 0 0 1px rgba(10, 10, 10, 0.1);
   box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
-  color: #ff3860;
-  padding: 0;
-  min-height: 800px;
+  color:#363636;
+  height: 85vh;
 }
+
 #game-title {
   font-weight: bold;
   color: white;
 }
-#game-columns {
-  padding: 0.8rem 1.5rem;
-  flex: 1;
+
+#game-columns{
+  max-width: 98em;
+  margin: 1em auto;
 }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-gap: 10px;
+}
+.span-col-2{
+  grid-column: span 2 / auto;
+}
+
+.span-col-5{
+  grid-column: span 5 / auto;
+}
+
+
+.span-col-3{grid-column: span 3 / auto;}
 </style>

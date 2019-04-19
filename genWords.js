@@ -7,7 +7,7 @@ console.log(en());
 
 // generate 3 random words for the player to choose from:
 exports.genWords = function(lang){
-    var words = [];
+    var words;
 
     switch (lang) {
         case 'es':

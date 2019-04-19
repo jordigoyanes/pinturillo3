@@ -32,7 +32,7 @@ export default {
 
 <style lang="scss">
 #scores {
-  display: flex;
-  flex: 1;
+  width: 15em;
+  padding: 1em;
 }
 </style>

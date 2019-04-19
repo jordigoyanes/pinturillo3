@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="chat">
     <div class="field">
       <div class="chatbox">
         <ul>
@@ -95,9 +95,12 @@ export default {
 };
 </script>
 <style lang="scss">
+#chat{
+  width: 25em;
+  padding:1em;
+}
 .chatbox {
-  min-height: 200px;
-  max-height: 200px;
+  min-height: 2em;
   overflow: auto;
 }
 .evt {
