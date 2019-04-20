@@ -34,5 +34,6 @@ export default {
 #scores {
   width: 15em;
   padding: 1em;
+  height: 85vh;
 }
 </style>

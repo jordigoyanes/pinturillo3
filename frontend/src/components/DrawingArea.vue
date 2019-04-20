@@ -39,10 +39,6 @@ export default {
       }
     },
     onMouseDown(e) {
-      /*
-        this.xCoord = e.pageX - this.canvas.offsetLeft;
-        this.yCoord = e.pageY - this.canvas.offsetTop;
-      */
       console.log("x:" + e.offsetX);
       console.log("y:" + e.offsetY);
       this.drawing = true;
@@ -110,8 +106,8 @@ export default {
       this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color);
     },
     onResize() {
-      this.canvas.width = this.canvas.parentElement.clientWidth;
-      this.canvas.height = this.canvas.parentElement.clientHeight;
+      // this.canvas.width = this.canvas.parentElement.clientWidth;
+      // this.canvas.height = this.canvas.parentElement.clientHeight;
     }
   },
   mounted() {
@@ -122,8 +118,8 @@ export default {
     this.context.lineWidth = this.lineWidth;
     this.context.lineCap = "round";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    //window.addEventListener("resize", this.onResize, false);
-    //this.onResize();
+    window.addEventListener("resize", this.onResize, false);
+    this.onResize();
     this.socket.on("drawing", this.onDrawingEvent);
   }
 };
@@ -131,6 +127,6 @@ export default {
 
 <style lang="scss">
 #canvas {
-  border-radius: 6px;
+  border-radius: 0px 0px 6px 6px;
 }
 </style>

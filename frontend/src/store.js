@@ -11,6 +11,7 @@ export default new Vuex.Store({
     socket: io("pinturillo3.herokuapp.com"),
     localPlayer: null,
     isLoggedIn: false,
+    isDrawing: false,
     room_id: null,
     players: null,
     i18n: i18n

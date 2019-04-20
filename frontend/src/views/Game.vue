@@ -20,37 +20,18 @@
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
       <div id="game-columns" class="grid">
-        <div class="game-column span-col-2">
+        <div class="whitebox span-col-2">
           <Scores />
         </div>
-        <div class="game-column span-col-5">
+        <div class="span-col-5">
+          <div id="word-top" class="whitebox has-background-danger">test</div>
+          
           <DrawingArea />
         </div>
-        <div class="game-column span-col-3">
+        <div class="whitebox span-col-3">
           <Chatbox />
         </div>
       </div>
-      <!-- 
-      <div id="game-columns" class="columns">
-        <div class="column is-one-fifth">
-          <div id="score-bar" class="box">
-            usuarios y puntuacion
-            <Scores />
-          </div>
-        </div>
-        <div class="column is-half">
-          <div id="canvas-wrapper">
-            <DrawingArea />
-          </div>
-        </div>
-        <div class="column">
-          <div id="chat-bar" class="box">
-            <p class="is-primary">chat</p>
-            <Chatbox />
-          </div>
-        </div>
-      </div>
-      -->
     </div>
   </div>
 </template>
@@ -111,15 +92,23 @@ export default {
 </script>
 
 <style lang="scss">
+h1#game-title:nth-child(0){
+  color:red;
 
-.game-column {
+}
+
+.whitebox {
   background-color: white;
   border-radius: 6px;
   -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1),
     0 0 0 1px rgba(10, 10, 10, 0.1);
   box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
   color:#363636;
-  height: 85vh;
+  
+}
+#word-top{
+  padding: 1em;
+  border-radius: 6px 6px 0px 0px;
 }
 
 #game-title {
@@ -128,7 +117,6 @@ export default {
 }
 
 #game-columns{
-  max-width: 98em;
   margin: 1em auto;
 }
 .grid {
@@ -139,11 +127,11 @@ export default {
 .span-col-2{
   grid-column: span 2 / auto;
 }
-
 .span-col-5{
   grid-column: span 5 / auto;
 }
+.span-col-3{
+  grid-column: span 3 / auto;
+}
 
-
-.span-col-3{grid-column: span 3 / auto;}
 </style>

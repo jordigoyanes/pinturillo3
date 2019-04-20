@@ -1,7 +1,7 @@
 <template>
   <div id="chat">
     <div class="field">
-      <div class="chatbox">
+      <div id="chatbox">
         <ul>
           <li v-for="(chatmsg, index) in chat_messages" :key="index">
             <div v-if="chatmsg.type == 'evt'">
@@ -18,7 +18,7 @@
         </ul>
       </div>
     </div>
-    <div class="field">
+    <div id="guess" class="field">
       <div class="control">
         <input
           class="input is-danger"
@@ -40,7 +40,7 @@ export default {
   data: function() {
     return {
       guess: "",
-      chat_messages: [{ username: "jordi", message: "i don't know" }]
+      chat_messages: []
     };
   },
   methods: {
@@ -54,10 +54,16 @@ export default {
           message: this.guess
         });
         this.guess = "";
+        
       }
+    },
+    scrollToEnd: function(){
+      var chatbox = document.getElementById("chatbox");
+      chatbox.scrollTop = chatbox.scrollHeight;
     }
   },
   mounted() {
+    this.scrollToEnd();
     this.socket.on("new_message", data => {
       this.chat_messages = [...this.chat_messages, data];
     });
@@ -84,6 +90,9 @@ export default {
       this.chat_messages = [...this.chat_messages, data];
     });
   },
+  updated(){
+    this.scrollToEnd();
+  },
   computed: {
     ...mapState({
       socket: "socket",
@@ -98,11 +107,19 @@ export default {
 #chat{
   width: 25em;
   padding:1em;
+  height: 100%;
+  position: relative;
 }
-.chatbox {
+#guess{
+  position: absolute;
+  bottom: 10px;
+}
+#chatbox {
   min-height: 2em;
   overflow: auto;
+  max-height: 40em;
 }
+
 .evt {
   font-weight: bold;
   color: orange;
