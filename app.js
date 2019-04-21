@@ -1,10 +1,6 @@
 const express = require('express')
 const app = express();
 const path = require('path');
-const genWords = require('./genWords.js');
-const chat = require('./chat.js');
-const game = require('./game.js');
-const join = require('./handleJoin.js');
 
 var Datastore = require('nedb')
   , db = new Datastore({ 
