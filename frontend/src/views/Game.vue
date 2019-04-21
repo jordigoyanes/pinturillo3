@@ -87,6 +87,10 @@ export default {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
+    this.socket.on("score_change", newData => {
+      this.set_playerlist(newData.players);
+      console.log("this is the new data: " + JSON.stringify(newData.players));
+    });
   }
 };
 </script>

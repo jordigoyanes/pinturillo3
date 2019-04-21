@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('join_private_room', {message : data.message, username : data.username});
     })
     socket.on('join_private_room', (data) =>{
-        //todo: join private room
+        //todo: join private room with matching password
 
     });
 
@@ -155,13 +155,15 @@ io.on('connection', (socket) => {
                                 evt_type: "player_joined",
                                 username: joiner
                             })
+                            // start game with first turn:
+                            io.in(newRoom._id).emit('new_turn', {
+                                current_painter: joiner
+                            })
                 
                         }
                     });
                 }
-
             }
-
         });
         
     });

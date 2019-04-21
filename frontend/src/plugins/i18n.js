@@ -11,6 +11,10 @@ const messages = {
     enter_guess: "Enter guess...",
     play_public: "Public Room",
     play_private: "Private Room",
+    public_desc: "Play with anybody online",
+    private_desc: "Play only with your friends in a private room",
+    join_room: "Join Room",
+    create_room: "Create Room",
     chat_evt: {
       guessed_word: " has guessed the word!",
       going_to_draw: " is going to draw!",
@@ -26,6 +30,10 @@ const messages = {
     enter_guess: "Introduce palabra...",
     play_public: "Sala pública",
     play_private: "Sala privada",
+    public_desc: "Juega con cualquiera",
+    private_desc: "Juega con tus amigos en una sala privada",
+    join_room: "Unirse a sala",
+    create_room: "Crear sala",
     chat_evt: {
       guessed_word: " ha acertado la palabra!",
       going_to_draw: " va a dibujar.",

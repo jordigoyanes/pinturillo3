@@ -13,6 +13,9 @@
                 {{ $t("play_public") }}
               </h1>
             </div>
+            <div class="section">
+              <h3 class="title is-4">{{ $t("public_desc") }}</h3>
+            </div>
           </div>
           <div class="column">
             <div
@@ -22,6 +25,9 @@
               <h1 class=" is-size-1 has-text-centered">
                 {{ $t("play_private") }}
               </h1>
+            </div>
+            <div class="section">
+              <h3 class="title is-4">{{ $t("private_desc") }}</h3>
             </div>
           </div>
         </div>
