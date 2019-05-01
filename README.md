@@ -7,7 +7,7 @@ Stores user and game data using nedb.
 - [x] Join public rooms
 - [x] Real-time drawing with real-time chat
 - [x] Language selection (English or Spanish)
-- [x] Create and join private rooms
+- [ ] Create and join private rooms
 - [ ] Fancy animations when users guess the word
 
 
