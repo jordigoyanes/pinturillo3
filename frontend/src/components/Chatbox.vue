@@ -1,34 +1,27 @@
 <template>
-  <div id="chat">
-    <div class="field">
-      <div id="chatbox">
-        <ul>
-          <li v-for="(chatmsg, index) in chat_messages" :key="index">
-            <div v-if="chatmsg.type == 'evt'">
-              <span :class="chatmsg.evt_type"></span>
-              <p class="evt">{{ chatmsg.message }}</p>
-            </div>
-            <div v-else>
-              <p>
-                <strong>{{ chatmsg.username }}</strong
-                >: {{ chatmsg.message }}
-              </p>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div id="guess" class="field">
-      <div class="control">
-        <input
-          class="input is-danger"
-          type="text"
-          v-model="guess"
-          v-on:keyup.enter="send_message"
-          :placeholder="i18n.t('enter_guess')"
-        />
-      </div>
-    </div>
+  <div id="chatbox" class="whitebox span-col-3 span-row-85">
+    <ul id="messages">
+      <li v-for="(chatmsg, index) in chat_messages" :key="index">
+        <div v-if="chatmsg.type == 'evt'">
+          <span :class="chatmsg.evt_type"></span>
+          <p class="evt">{{ chatmsg.message }}</p>
+        </div>
+        <div v-else>
+          <p>
+            <strong>{{ chatmsg.username }}</strong
+            >: {{ chatmsg.message }}
+          </p>
+        </div>
+      </li>
+    </ul>
+    <input
+      id="guess"
+      class="input is-danger"
+      type="text"
+      v-model="guess"
+      v-on:keyup.enter="send_message"
+      :placeholder="i18n.t('enter_guess')"
+    />
   </div>
 </template>
 
@@ -54,12 +47,11 @@ export default {
           message: this.guess
         });
         this.guess = "";
-        
       }
     },
-    scrollToEnd: function(){
-      var chatbox = document.getElementById("chatbox");
-      chatbox.scrollTop = chatbox.scrollHeight;
+    scrollToEnd: function() {
+      var messages = document.getElementById("messages");
+      messages.scrollTop = messages.scrollHeight;
     }
   },
   mounted() {
@@ -90,7 +82,7 @@ export default {
       this.chat_messages = [...this.chat_messages, data];
     });
   },
-  updated(){
+  updated() {
     this.scrollToEnd();
   },
   computed: {
@@ -104,22 +96,20 @@ export default {
 };
 </script>
 <style lang="scss">
-#chat{
-  width: 25em;
-  padding:1em;
-  height: 100%;
-  position: relative;
-}
-#guess{
-  position: absolute;
-  bottom: 10px;
+input#guess {
+  margin-top: 0.75rem;
 }
 #chatbox {
-  min-height: 2em;
-  overflow: auto;
-  max-height: 40em;
+  padding: 1em;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  //flex-wrap: wrap;
 }
-
+#messages {
+  overflow: auto;
+  flex: 1;
+}
 .evt {
   font-weight: bold;
   color: orange;

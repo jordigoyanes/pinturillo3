@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="section has-background-info">
+    <section class="section has-background-dark">
       <div class="level">
         <div class="level-item level-left">
           <button @click="leave()" class="button is-dark ">
@@ -20,17 +20,13 @@
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
       <div id="game-columns" class="grid">
-        <div class="whitebox span-col-2">
-          <Scores />
-        </div>
-        <div class="span-col-5">
+        <Scores />
+        <div class="span-col-5 span-row-85">
           <div id="word-top" class="whitebox has-background-danger">test</div>
-          
+          <Toolbox />
           <DrawingArea />
         </div>
-        <div class="whitebox span-col-3">
-          <Chatbox />
-        </div>
+        <Chatbox />
       </div>
     </div>
   </div>
@@ -39,6 +35,7 @@
 import DrawingArea from "@/components/DrawingArea";
 import Chatbox from "@/components/Chatbox.vue";
 import Scores from "@/components/Scores";
+import Toolbox from "@/components/Toolbox";
 import { mapState, mapMutations } from "vuex";
 
 export default {
@@ -51,7 +48,8 @@ export default {
   components: {
     DrawingArea,
     Chatbox,
-    Scores
+    Scores,
+    Toolbox
   },
   methods: {
     leave() {
@@ -96,9 +94,8 @@ export default {
 </script>
 
 <style lang="scss">
-h1#game-title:nth-child(0){
-  color:red;
-
+h1#game-title:nth-child(0) {
+  color: red;
 }
 
 .whitebox {
@@ -107,10 +104,9 @@ h1#game-title:nth-child(0){
   -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1),
     0 0 0 1px rgba(10, 10, 10, 0.1);
   box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
-  color:#363636;
-  
+  color: #363636;
 }
-#word-top{
+#word-top {
   padding: 1em;
   border-radius: 6px 6px 0px 0px;
 }
@@ -120,22 +116,29 @@ h1#game-title:nth-child(0){
   color: white;
 }
 
-#game-columns{
+#game-columns {
   margin: 1em auto;
+  min-width: 80%;
+  padding: 0 2em;
 }
 .grid {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-gap: 10px;
 }
-.span-col-2{
+.span-col-2 {
   grid-column: span 2 / auto;
 }
-.span-col-5{
+.span-col-5 {
   grid-column: span 5 / auto;
 }
-.span-col-3{
+.span-col-3 {
   grid-column: span 3 / auto;
 }
-
+.span-row-85 {
+  grid-row: span 75 / auto;
+  min-height: 80vh;
+  max-height: 80vh;
+  overflow: hidden;
+}
 </style>

@@ -18,8 +18,8 @@ export default {
       rect: null,
       drawing: false,
       current: {
-        color: "black",
-        lineWidth: 2,
+        //color: "black",
+        //lineWidth: 2,
         x: 0,
         y: 0
       }
@@ -27,7 +27,9 @@ export default {
   },
   computed: {
     ...mapState({
-      socket: "socket"
+      socket: "socket",
+      brush_color: "brush_color",
+      brush_width: "brush_width"
     })
   },
   methods: {
@@ -46,7 +48,7 @@ export default {
       this.current.y = e.offsetY;
     },
     onMouseUp(e) {
-      //new coords
+      // new coords
       let mouseupX = e.offsetX;
       let mouseupY = e.offsetY;
       if (!this.drawing) {
@@ -57,7 +59,8 @@ export default {
         this.current.y,
         mouseupX,
         mouseupY,
-        this.current.color,
+        this.brush_color,
+        this.brush_width,
         true
       );
       this.drawing = false;
@@ -73,20 +76,21 @@ export default {
         this.current.y,
         mousemoveX,
         mousemoveY,
-        this.current.color,
+        this.brush_color,
+        this.brush_width,
         true
       );
       this.current.x = mousemoveX;
       this.current.y = mousemoveY;
     },
-    drawLine(x0, y0, x1, y1, color, emit) {
+    drawLine(x0, y0, x1, y1, color, brush_width, emit) {
       console.log("x0:" + x0 + ",y0:" + y0 + ",x1:" + x1 + ",y1:" + y1);
       this.context.beginPath();
       this.context.moveTo(x0, y0);
       this.context.lineTo(x1, y1);
 
       this.context.strokeStyle = color;
-      this.context.lineWidth = 2;
+      this.context.lineWidth = brush_width;
       this.context.stroke();
       this.context.closePath();
 
@@ -99,23 +103,31 @@ export default {
         y0: y0,
         x1: x1,
         y1: y1,
-        color: color
+        color: color,
+        brush_width: brush_width
       });
     },
     onDrawingEvent(data) {
-      this.drawLine(data.x0, data.y0, data.x1, data.y1, data.color);
+      this.drawLine(
+        data.x0,
+        data.y0,
+        data.x1,
+        data.y1,
+        data.color,
+        data.brush_width
+      );
     },
     onResize() {
-      // this.canvas.width = this.canvas.parentElement.clientWidth;
-      // this.canvas.height = this.canvas.parentElement.clientHeight;
+      this.canvas.width = this.canvas.parentElement.clientWidth;
+      this.canvas.height = this.canvas.parentElement.clientHeight;
     }
   },
   mounted() {
     this.canvas = this.$refs.canvas;
     this.context = this.$refs.canvas.getContext("2d");
     this.context.fillStyle = "#333";
-    this.context.strokeStyle = this.color;
-    this.context.lineWidth = this.lineWidth;
+    this.context.strokeStyle = this.brush_color;
+    this.context.lineWidth = this.brush_width;
     this.context.lineCap = "round";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     window.addEventListener("resize", this.onResize, false);
@@ -127,6 +139,6 @@ export default {
 
 <style lang="scss">
 #canvas {
-  border-radius: 0px 0px 6px 6px;
+  background-color: white;
 }
 </style>

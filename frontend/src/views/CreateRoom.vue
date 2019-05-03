@@ -4,7 +4,9 @@
       <div class="container is-mobile">
         <div v-if="!isLoading" class="columns is-centered">
           <div class="column is-half">
-            <h1 class="title is-size-2 has-text-centered">{{ $t("create_room") }}</h1>
+            <h1 class="title is-size-2 has-text-centered">
+              {{ $t("create_room") }}
+            </h1>
             <div v-show="showErr" class="notification is-danger">
               <button @click="showErr = false" class="delete"></button>
               Invalid room name or password
@@ -42,7 +44,9 @@
             </div>
           </div>
           <div class="column is-half">
-            <h1 class="title is-size-2 has-text-centered">{{ $t("join_room") }}</h1>
+            <h1 class="title is-size-2 has-text-centered">
+              {{ $t("join_room") }}
+            </h1>
             <div v-show="showErr" class="notification is-danger">
               <button @click="showErr = false" class="delete"></button>
               Invalid room name or password
@@ -104,7 +108,7 @@ export default {
       join_room_password: "",
       isLoading: false,
       i18n: i18n,
-      disabled: false,
+      disabled: false
     };
   },
   created() {

@@ -14,9 +14,17 @@ export default new Vuex.Store({
     isDrawing: false,
     room_id: null,
     players: null,
-    i18n: i18n
+    i18n: i18n,
+    brush_color: "red",
+    brush_width: 4
   },
   mutations: {
+    set_brush_color(state, payload) {
+      state.brush_color = payload;
+    },
+    set_brush_width(state, payload) {
+      state.brush_width = payload;
+    },
     set_localplayer(state, payload) {
       state.localPlayer = payload;
     },

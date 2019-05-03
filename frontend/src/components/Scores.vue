@@ -1,14 +1,16 @@
 <template>
-  <div id="scores">
+  <div id="scores" class="whitebox span-col-2 span-row-85">
     <ul>
       <li v-for="(player, index) in orderedUsers" :key="index">
+        <div class="score">
         <div v-if="player.username == localPlayer">
-          <strong>{{ player.username }}</strong>
+          <h2><strong>{{ player.username }}</strong></h2>
         </div>
-        <div v-else>
+        <h2 v-else >
           {{ player.username }}
+        </h2>
+        - SCORE: {{ player.score }}
         </div>
-        - Score: {{ player.score }}
       </li>
     </ul>
   </div>
@@ -32,8 +34,16 @@ export default {
 
 <style lang="scss">
 #scores {
-  width: 15em;
   padding: 1em;
-  height: 85vh;
 }
+.score{
+  border-bottom: .1rem  solid #dbdbdb;
+  padding: .5em;
+}
+
+#scores h2{
+  font-family:"Kalam", bold;
+  font-size: 23px;
+}
+
 </style>
