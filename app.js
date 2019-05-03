@@ -224,6 +224,9 @@ io.on('connection', (socket) => {
     socket.on('chat_evt', (data) => {
         io.in(socket.room_id).emit('chat_evt', data);
     });
+    socket.on('clear_canvas', () => {
+        io.in(socket.room_id).emit('clear_canvas');
+    });
 
     socket.on('disconnect', function() {
         console.log('someone left: ' + socket.username + " room id: " + socket.room_id + "isInroom: " + socket.isInRoom)

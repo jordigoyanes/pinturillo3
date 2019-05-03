@@ -1,6 +1,6 @@
 <template>
   <div id="toolbox" class="has-background-warning">
-    <div id="clean-canvas">
+    <div id="clean-canvas" @click="socket.emit('clear_canvas');">
       <img src="../assets/clean-canvas.svg" alt="" />
     </div>
     <div id="palette">
@@ -19,7 +19,7 @@
       <div class="color blue-3" @click="set_brush_color('#0040c6')" />
       <div class="color blue-4" @click="set_brush_color('#002f5e')" />
       <div class="color salmon" @click="set_brush_color('#f88271')" />
-      <div class="color pink" @click="set_brush_color('#ff00ff')" />
+      <div class="color pink" @click="set_brush_color('#ff69b3')" />
       <div class="color purple" @click="set_brush_color('#993399')" />
       <div class="gray" @click="set_brush_color('gray')" />
     </div>
@@ -27,18 +27,32 @@
   </div>
 </template>
 <script>
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "toolbox",
   methods: {
     ...mapMutations({
-      set_brush_color: "set_brush_color"
+      set_brush_color: "set_brush_color",
+      set_brush_width: "set_brush_width"
+    })
+  },
+  computed:{
+      ...mapState({
+      socket: "socket"
     })
   }
 };
 </script>
 
 <style lang="scss">
+
+.size{
+    display:flex;
+    margin-left: 0.5em;
+    background-color:white;
+    border-radius: 5px;
+    padding: 5px;
+}
 .salmon{background-color: #f88271}
 .blue-3{
 background-color:#0040c6
@@ -58,7 +72,7 @@ background-color:#0040c6
     background-color: #993399
 }
 .pink{
-    background-color: #ff00ff
+    background-color: #ff69b3
 }
 .red {
   background-color: #ff0000;

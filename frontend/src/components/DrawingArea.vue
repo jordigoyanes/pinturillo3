@@ -133,6 +133,7 @@ export default {
     window.addEventListener("resize", this.onResize, false);
     this.onResize();
     this.socket.on("drawing", this.onDrawingEvent);
+    this.socket.on("clear_canvas", ()=>{this.context.clearRect(0, 0, canvas.width, canvas.height);});
   }
 };
 </script>

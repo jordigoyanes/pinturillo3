@@ -9,7 +9,7 @@
         <h2 v-else >
           {{ player.username }}
         </h2>
-        - SCORE: {{ player.score }}
+        SCORE: {{ player.score }}
         </div>
       </li>
     </ul>
