@@ -23,7 +23,19 @@
       <div class="color purple" @click="set_brush_color('#993399')" />
       <div class="gray" @click="set_brush_color('gray')" />
     </div>
-    <div class="size" id="size1"></div>
+    <div class="size" @click="set_brush_width(4)">
+        <div id="size1"></div>
+    </div>
+    <div class="size" @click="set_brush_width(8)">
+        <div id="size2"></div>
+    </div>
+    <div class="size" @click="set_brush_width(16)">
+        <div id="size3"></div>
+    </div>
+    <div id="cancel-turn">
+
+    <a class="delete is-large"></a>
+    </div>
   </div>
 </template>
 <script>
@@ -45,13 +57,38 @@ export default {
 </script>
 
 <style lang="scss">
+#cancel-turn{
+    margin-left: 1em;
+}
+#size1,#size2,#size3{
+    background-color: black;
+    border-radius: 100%;
+    margin:0 auto;
+}
+#size1{
+    width: 8px;
+    height: 8px;  
+}
+#size2{
+    width: 16px;
+    height: 16px;
+}
+#size3{
+    width: 24px;
+    height: 24px;
+}
 
 .size{
+    
     display:flex;
     margin-left: 0.5em;
     background-color:white;
     border-radius: 5px;
     padding: 5px;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    width: auto;
 }
 .salmon{background-color: #f88271}
 .blue-3{
@@ -129,9 +166,12 @@ background-color:#0040c6
   width: 25px;
   //border: solid 1px black;
 }
-.color :hover,
-#clean-canvas :hover,
-.size :hover {
+.color:hover,
+#clean-canvas:hover,
+.size:hover {
   cursor: pointer;
+}
+.size:hover{
+    background-color: #dbdbdb;
 }
 </style>
