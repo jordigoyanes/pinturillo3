@@ -21,7 +21,7 @@
     <div class="hero is-mobile is-dark is-fullheight">
       <div id="game-columns" class="grid">
         <Scores />
-        <div class="span-col-5 span-row-85">
+        <div id="drawing-column" class="span-col-5 span-row-85">
           <div id="word-top" class="whitebox has-background-danger">test</div>
           <Toolbox />
           <DrawingArea />
@@ -123,6 +123,9 @@ h1#game-title:nth-child(0) {
   margin: 1em auto;
   min-width: 80%;
   padding: 0 2em;
+}
+#drawing-column{
+  border-radius: 0px 0px 6px 6px;
 }
 .grid {
   display: grid;
