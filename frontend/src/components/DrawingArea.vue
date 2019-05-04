@@ -33,16 +33,7 @@ export default {
     })
   },
   methods: {
-    switch_color(color) {
-      switch (color) {
-        case "red":
-          console.log("hi");
-          break;
-      }
-    },
     onMouseDown(e) {
-      console.log("x:" + e.offsetX);
-      console.log("y:" + e.offsetY);
       this.drawing = true;
       this.current.x = e.offsetX;
       this.current.y = e.offsetY;
@@ -84,7 +75,6 @@ export default {
       this.current.y = mousemoveY;
     },
     drawLine(x0, y0, x1, y1, color, brush_width, emit) {
-      console.log("x0:" + x0 + ",y0:" + y0 + ",x1:" + x1 + ",y1:" + y1);
       this.context.beginPath();
       this.context.moveTo(x0, y0);
       this.context.lineTo(x1, y1);
@@ -118,10 +108,9 @@ export default {
       );
     },
     onResize() {
-      if(this.canvas.parentElement.clientWidth){
+      if (this.canvas.parentElement.clientWidth) {
         this.canvas.width = this.canvas.parentElement.clientWidth;
         this.canvas.height = this.canvas.parentElement.clientHeight;
-
       }
     }
   },
@@ -136,7 +125,9 @@ export default {
     window.addEventListener("resize", this.onResize, false);
     this.onResize();
     this.socket.on("drawing", this.onDrawingEvent);
-    this.socket.on("clear_canvas", ()=>{this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);});
+    this.socket.on("clear_canvas", () => {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    });
   }
 };
 </script>

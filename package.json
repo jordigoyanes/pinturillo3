@@ -20,6 +20,7 @@
     "path": "^0.12.7",
     "random-spanish-words": "^2.0.0",
     "random-words": "^1.1.0",
+    "roomdata": "^1.1.7-b",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {

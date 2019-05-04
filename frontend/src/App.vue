@@ -11,7 +11,7 @@ $section-padding: 0.8rem 1.5rem;
 @import url("https://fonts.googleapis.com/css?family=Kalam");
 
 h1 {
-  font-family:"Kalam", cursive;
+  font-family: "Kalam", cursive;
 }
 
 #nav {

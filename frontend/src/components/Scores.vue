@@ -3,13 +3,15 @@
     <ul>
       <li v-for="(player, index) in orderedUsers" :key="index">
         <div class="score">
-        <div v-if="player.username == localPlayer">
-          <h2><strong>{{ player.username }}</strong></h2>
-        </div>
-        <h2 v-else >
-          {{ player.username }}
-        </h2>
-        SCORE: {{ player.score }}
+          <div v-if="player.username == localPlayer">
+            <h2>
+              <strong>{{ player.username }}</strong>
+            </h2>
+          </div>
+          <h2 v-else>
+            {{ player.username }}
+          </h2>
+          SCORE: {{ player.score }}
         </div>
       </li>
     </ul>
@@ -36,14 +38,13 @@ export default {
 #scores {
   padding: 1em;
 }
-.score{
-  border-bottom: .1rem  solid #dbdbdb;
-  padding: .5em;
+.score {
+  border-bottom: 0.1rem solid #dbdbdb;
+  padding: 0.5em;
 }
 
-#scores h2{
-  font-family:"Kalam", bold;
+#scores h2 {
+  font-family: "Kalam", bold;
   font-size: 23px;
 }
-
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="toolbox" class="has-background-warning">
-    <div id="clean-canvas" @click="socket.emit('clear_canvas');">
+    <div id="clean-canvas" @click="socket.emit('clear_canvas')">
       <img src="../assets/clean-canvas.svg" alt="" />
     </div>
     <div id="palette">
@@ -24,17 +24,16 @@
       <div class="gray" @click="set_brush_color('gray')" />
     </div>
     <div class="size" @click="set_brush_width(4)">
-        <div id="size1"></div>
+      <div id="size1"></div>
     </div>
     <div class="size" @click="set_brush_width(8)">
-        <div id="size2"></div>
+      <div id="size2"></div>
     </div>
     <div class="size" @click="set_brush_width(16)">
-        <div id="size3"></div>
+      <div id="size3"></div>
     </div>
     <div id="cancel-turn">
-
-    <a class="delete is-large"></a>
+      <a class="delete is-large"></a>
     </div>
   </div>
 </template>
@@ -48,8 +47,8 @@ export default {
       set_brush_width: "set_brush_width"
     })
   },
-  computed:{
-      ...mapState({
+  computed: {
+    ...mapState({
       socket: "socket"
     })
   }
@@ -57,65 +56,72 @@ export default {
 </script>
 
 <style lang="scss">
-#cancel-turn{
-    margin-left: 1em;
+#cancel-turn {
+  margin-left: 1em;
 }
-#size1,#size2,#size3{
-    background-color: black;
-    border-radius: 100%;
-    margin:0 auto;
+#size1,
+#size2,
+#size3 {
+  background-color: black;
+  border-radius: 100%;
+  margin: 0 auto;
 }
-#size1{
-    width: 8px;
-    height: 8px;  
+#size1 {
+  width: 8px;
+  height: 8px;
 }
-#size2{
-    width: 16px;
-    height: 16px;
+#size2 {
+  width: 16px;
+  height: 16px;
 }
-#size3{
-    width: 24px;
-    height: 24px;
+#size3 {
+  width: 24px;
+  height: 24px;
 }
 
-.size{
-    
-    display:flex;
-    margin-left: 0.5em;
-    background-color:white;
-    border-radius: 5px;
-    padding: 5px;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    width: auto;
+.size {
+  display: flex;
+  margin-left: 0.5em;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  width: auto;
 }
-.salmon{background-color: #f88271}
-.blue-3{
-background-color:#0040c6
+.salmon {
+  background-color: #f88271;
 }
-.blue-4{
-    background-color:#002f5e
+.blue-3 {
+  background-color: #0040c6;
 }
-.dark-blue{
-    background-color:#0064a6
+.blue-4 {
+  background-color: #002f5e;
 }
-.dark-green{background-color: #277827}
-.dark-yellow{background-color: #aaaa00}
-.gray{
-    background-color: gray
+.dark-blue {
+  background-color: #0064a6;
 }
-.purple{
-    background-color: #993399
+.dark-green {
+  background-color: #277827;
 }
-.pink{
-    background-color: #ff69b3
+.dark-yellow {
+  background-color: #aaaa00;
+}
+.gray {
+  background-color: gray;
+}
+.purple {
+  background-color: #993399;
+}
+.pink {
+  background-color: #ff69b3;
 }
 .red {
   background-color: #ff0000;
 }
-.blue{
-    background-color: #0099ff;
+.blue {
+  background-color: #0099ff;
 }
 .dark-red {
   background-color: #bf0000;
@@ -123,11 +129,11 @@ background-color:#0040c6
 .orange {
   background-color: #ff9900;
 }
-.dark-orange{
-    background-color: #996633;
+.dark-orange {
+  background-color: #996633;
 }
-.yellow{
-    background-color:#ffff00;
+.yellow {
+  background-color: #ffff00;
 }
 .white {
   background-color: white;
@@ -135,8 +141,8 @@ background-color:#0040c6
 .black {
   background-color: black;
 }
-.green{
-    background-color: #339933;
+.green {
+  background-color: #339933;
 }
 
 #toolbox {
@@ -171,7 +177,8 @@ background-color:#0040c6
 .size:hover {
   cursor: pointer;
 }
-.size:hover{
-    background-color: #dbdbdb;
+.size:hover,
+#clean-canvas:hover {
+  background-color: #dbdbdb;
 }
 </style>

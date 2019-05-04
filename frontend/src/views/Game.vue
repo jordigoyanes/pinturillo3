@@ -13,7 +13,7 @@
         <div class="level-item level-right">
           <div class="tags has-addons">
             <span class="tag is-dark">Room ID</span>
-            <span class="tag is-success">{{ this.room_id }}</span>
+            <span class="tag is-warning">{{ this.room_id }}</span>
           </div>
         </div>
       </div>
@@ -88,6 +88,9 @@ export default {
     this.socket.on("score_change", newData => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
+    });
+    this.socket.on("countdown_sec", data => {
+      console.log("Second: " + data.secs);
     });
   }
 };

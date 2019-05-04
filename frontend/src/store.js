@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import i18n from "@/plugins/i18n";
 
 Vue.use(Vuex);
-// "pinturillo3.herokuapp.com"
+// "https://pinturillo3.herokuapp.com"
 // "localhost:3000"
 export default new Vuex.Store({
   state: {

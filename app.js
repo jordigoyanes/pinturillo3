@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express();
 const path = require('path');
+var start_game_loop = require("./gameLoop.js");
 
 var Datastore = require('nedb'),
     db = new Datastore({
@@ -86,8 +87,7 @@ io.on('connection', (socket) => {
             }
 
             if (docs.length > 0) {
-                let randpick = Math.floor(Math.random() * Math.floor(docs.length));
-                let room = docs[randpick];
+                let room = docs[0];
                 let new_joiner_name = joiner;
                 // if player has same name as other player in room, concatenate room_id to name
                 // as many times as necessary, to make it unique
@@ -97,7 +97,7 @@ io.on('connection', (socket) => {
                     }
                 }
                 // make socket join room so only this socket gets notified of 'joined_room'
-                socket.join(room._id);
+                
                 db.update({
                     _id: room._id
                 }, {
@@ -117,11 +117,12 @@ io.on('connection', (socket) => {
                         if (err) {
                             return console.err(err)
                         }
-                        // io.sockets.adapter.rooms[room._id].room_id = room._id;
                         // send to client new player list with new player inside
+                        socket.join(room._id);
                         socket.username = new_joiner_name;
                         socket.room_id = room._id;
                         socket.isInRoom = true;
+
                         io.in(room._id).emit('joined_room', {
                             players: updatedRoom.players,
                         })
@@ -137,12 +138,14 @@ io.on('connection', (socket) => {
                         })
                         socket.is_waiting_next_round = true;
 
+                        /*
                         socket.emit('wait_next_round');
                         setTimeout(() => {
                             io.in(socket.room_id).emit('new_turn', {
                                 current_painter: joiner
                             })
                         }, 5000);
+                        */
 
                     });
                 });
@@ -162,14 +165,16 @@ io.on('connection', (socket) => {
                     nextPainter: 'username'
                 }
 
-                db.insert(room, function(err, newRoom) {
+                db.insert(room, async function(err, newRoom) {
                     if (err) {
                         return console.err(err)
                     }
+                    // Setting socket variables:
                     socket.join(newRoom._id);
                     socket.username = joiner;
                     socket.room_id = newRoom._id;
                     socket.isInRoom = true;
+
                     io.in(newRoom._id).emit('joined_room', {
                         players: room.players,
                     })
@@ -183,11 +188,8 @@ io.on('connection', (socket) => {
                         evt_type: "player_joined",
                         username: joiner
                     })
-
-                    // start game with first turn:
-                    io.in(socket.room_id).emit('new_turn', {
-                        current_painter: joiner
-                    })
+                    // the first player to join will start the game loop
+                    await start_game_loop(io, socket, db);
                 });
             }
         });
@@ -266,7 +268,7 @@ io.on('connection', (socket) => {
                             num_players: room.num_players - 1
                         }
                     }, {}, function() {
-                        socket.leave(room_id);
+                        socket.leave(room_id)
                         db.findOne({
                             _id: room_id
                         }, function(err, updatedRoom) {
