@@ -114,13 +114,13 @@ export default {
   margin: 0 auto;
 }
 #word-top {
-  display:flex;
+  display: flex;
   align-items: center;
   padding: 1em;
   border-radius: 6px 6px 0px 0px;
 }
 #clock {
-  position:absolute;
+  position: absolute;
   width: 3rem;
   height: 3rem;
   font-family: "Kalam", cursive;

@@ -8,7 +8,7 @@ Vue.use(Vuex);
 // "localhost:3000"
 export default new Vuex.Store({
   state: {
-    socket: io("localhost:3000"),
+    socket: io("https://pinturillo3.herokuapp.com"),
     localPlayer: null,
     isLoggedIn: false,
     isDrawing: false,
@@ -32,7 +32,7 @@ export default new Vuex.Store({
       let players = state.players;
       for (let i = 0; i < players.length; i++) {
         if (players[i].username === payload.username) {
-          players[i].score += payload.score;
+          players[i].score = payload.score;
         }
       }
     },
