@@ -22,7 +22,18 @@
       <div id="game-columns" class="grid">
         <Scores />
         <div id="drawing-column" class="span-col-5 span-row-85">
-          <div id="word-top" class="whitebox has-background-danger">test</div>
+          <div id="word-top" class="whitebox has-background-danger">
+            <div id="clock">
+              <div id="sec">17</div>
+            </div>
+            <div id="word">
+              <div class="letter_box">N</div>
+              <div class="letter_box">U</div>
+              <div class="letter_box"></div>
+              <div class="letter_box"></div>
+              <div class="letter_box">S</div>
+            </div>
+          </div>
           <Toolbox />
           <DrawingArea />
         </div>
@@ -97,8 +108,45 @@ export default {
 </script>
 
 <style lang="scss">
+#word {
+  display: flex;
+  align-items: flex-end;
+  margin: 0 auto;
+}
+#word-top {
+  display:flex;
+  align-items: center;
+  padding: 1em;
+  border-radius: 6px 6px 0px 0px;
+}
+#clock {
+  position:absolute;
+  width: 3rem;
+  height: 3rem;
+  font-family: "Kalam", cursive;
+  background-color: white;
+  border: 4px solid black;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 2em;
+}
 h1#game-title:nth-child(0) {
   color: red;
+}
+
+#sec {
+  margin: 0 auto;
+}
+
+.letter_box {
+  border-bottom: 4px solid #b5203e;
+  padding: 3px;
+  margin-right: 2px;
+  font-weight: bold;
+  color: white;
+  display: inline-block;
+  width: 1em;
 }
 
 .whitebox {
@@ -108,10 +156,6 @@ h1#game-title:nth-child(0) {
     0 0 0 1px rgba(10, 10, 10, 0.1);
   box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
   color: #363636;
-}
-#word-top {
-  padding: 1em;
-  border-radius: 6px 6px 0px 0px;
 }
 
 #game-title {
@@ -124,7 +168,7 @@ h1#game-title:nth-child(0) {
   min-width: 80%;
   padding: 0 2em;
 }
-#drawing-column{
+#drawing-column {
   border-radius: 0px 0px 6px 6px;
 }
 .grid {

@@ -29,7 +29,7 @@
     <div class="size" @click="set_brush_width(8)">
       <div id="size2"></div>
     </div>
-    <div class="size" @click="set_brush_width(16)">
+    <div class="size" @click="set_brush_width(24)">
       <div id="size3"></div>
     </div>
     <div id="cancel-turn">
@@ -147,12 +147,8 @@ export default {
 
 #toolbox {
   display: flex;
-  width: 40rem;
-  border-radius: 0px 0px 10px 0px;
   padding: 5px;
-  position: absolute;
-  border-bottom: 2px solid black;
-  border-right: 2px solid black;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 #clean-canvas {
   background-color: white;

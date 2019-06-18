@@ -7,7 +7,7 @@ var Datastore = require('nedb'),
     db = new Datastore({
         filename: './rooms.db',
         autoload: true
-    });
+});
 
 //middlewares
 app.use(express.static(path.resolve(__dirname, './frontend/dist')));
@@ -36,7 +36,6 @@ io.on('connection', (socket) => {
     socket.on('turn_start', (data) => {
 
     })
-
     // USER 
     console.log('New player connected')
 
@@ -91,12 +90,12 @@ io.on('connection', (socket) => {
                 let new_joiner_name = joiner;
                 // if player has same name as other player in room, concatenate room_id to name
                 // as many times as necessary, to make it unique
+
                 for (let i = 0; i < room.players.length; i++) {
                     if (room.players[i].username == new_joiner_name) {
                         new_joiner_name += "-" + (room._id).substring(0, 5)
                     }
                 }
-                // make socket join room so only this socket gets notified of 'joined_room'
                 
                 db.update({
                     _id: room._id
