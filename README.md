@@ -5,6 +5,7 @@ It uses socket.io to easily achieve real-time drawing, user chatting, and every 
 Stores user and game data using nedb.  
 [LIVE DEMO](https://pinturillo3.herokuapp.com)  
 ![Drag Racing](https://raw.githubusercontent.com/jordigoyanes/pinturillo3/master/docs/images/screenshot1.PNG)
+
 ### FEATURES:
 - [x] Join public rooms
 - [x] Real-time drawing with real-time chat
@@ -12,4 +13,13 @@ Stores user and game data using nedb.
 - [ ] Create and join private rooms
 - [ ] Fancy animations when users guess the word
 
-
+#### Test locally
+First build the vue frontend:
+```
+cd frontend
+npm run build
+```
+Run the nodejs server:
+```
+nodemon app
+```

@@ -9,6 +9,7 @@ async function start_game_loop(io, socket, db){
         // io.in(room_id).emit('new_turn')
         
     }
+    console.log("loop stoped cuz no players inside")
 
 }
 function wait_5_sec(io, room_id){

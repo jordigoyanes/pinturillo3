@@ -6,7 +6,7 @@ var start_game_loop = require("./gameLoop.js");
 var Datastore = require('nedb'),
     db = new Datastore({
         filename: './rooms.db',
-        autoload: true
+        autoload: truem,
 });
 
 //middlewares
