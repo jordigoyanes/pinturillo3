@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "vue-cli-service build",
+    "postinstall": "cd frontend && npm run build",
     "start": "nodemon app"
   },
   "repository": {
@@ -34,9 +34,7 @@
   "devDependencies": {
     "vuepress": "^1.0.1",
     "@vue/cli-plugin-babel": "^3.4.0",
-    "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
-    "@vue/eslint-config-prettier": "^4.0.1",
     "lint-staged": "^8.1.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
