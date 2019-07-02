@@ -1,4 +1,5 @@
 async function start_game_loop(io, socket, db){ 
+    // Make this a recursive function
     //while room is still active(has players inside):
     while(io.sockets.adapter.rooms[socket.room_id]){
        await countdown_3_sec(io, socket.room_id);
