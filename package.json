@@ -17,7 +17,6 @@
     "express": "^4.16.2",
     "lokijs-mini": "^1.5.0-mini",
     "nedb": "^1.8.0",
-    "nodemon": "^1.14.3",
     "path": "^0.12.7",
     "random-spanish-words": "^2.0.0",
     "random-words": "^1.1.0",
@@ -32,9 +31,14 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "vuepress": "^1.0.1",
+    "nodemon": "^1.14.3",
     "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
+    "@vue/eslint-config-prettier": "^4.0.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
     "lint-staged": "^8.1.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
