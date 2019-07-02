@@ -1,11 +1,11 @@
 {
-  "name": "pinturillo 3",
+  "name": "pinturillo3",
   "version": "1.0.0",
   "description": "Pinturillo 3 nodejs server",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "cd frontend && npm run build && cd ..",
+    "build": "cd frontend && npm run build && cd ..",
     "start": "nodemon app"
   },
   "repository": {
