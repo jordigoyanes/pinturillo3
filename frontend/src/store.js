@@ -4,11 +4,12 @@ import io from "socket.io-client";
 import i18n from "@/plugins/i18n";
 
 Vue.use(Vuex);
-// "https://pinturillo3.herokuapp.com"
-// "localhost:3000"
+
+const socketlink = process.env.NODE_ENV === "production" ? "https://pinturillo3.herokuapp.com" : "localhost:3000"
+
 export default new Vuex.Store({
   state: {
-    socket: io("https://pinturillo3.herokuapp.com"),
+    socket: io(socketlink),
     localPlayer: null,
     isLoggedIn: false,
     isDrawing: false,
