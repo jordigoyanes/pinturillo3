@@ -1,13 +1,7 @@
 const express = require('express')
 const app = express();
 const path = require('path');
-var start_game_loop = require("./gameLoop.js");
-
-var Datastore = require('nedb'),
-    db = new Datastore({
-        filename: './rooms.db',
-        autoload: true,
-});
+var start_rounds = require("./gameLoop.js");
 
 //middlewares
 app.use(express.static(path.resolve(__dirname, './frontend/dist')));
@@ -25,6 +19,11 @@ console.log("Listening on port " + (process.env.PORT || 3000));
 // pinturillo constants
 const MAX_PLAYERS = 5;
 const TIME_LIMIT = 99;
+
+
+let gameState = {
+    rooms:[]
+}
 
 //socket.io instantiation
 const io = require("socket.io")(server)
@@ -71,127 +70,103 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join_public_room', async (data) => {
-
-        //join public room, only takes username
+        let rooms = gameState.rooms
+        //join public room with public type, only takes username
+        // check if public, has less than MAX_PLAYERS and same language
         var joiner = data.player;
-        await db.find({
-            room_type: "public",
-            room_language: data.locale,
-            num_players: {
-                $lt: MAX_PLAYERS
-            }
-        }, function(err, docs) {
-            if (err) {
-                return console.error(err)
-            }
+        console.log("Esto es rooms length: " + rooms.length)
+        let found_room = rooms.find(function(room) {
+            return room && room.type == "public" 
+                    && room.language == data.locale
+                    && room.players.length < MAX_PLAYERS;
+        });  
+        if (found_room != undefined) {
+            let room = found_room;
+            let new_joiner_name = joiner;
+            // if player has same name as other player in room, concatenate room_index to name
+            // as many times as necessary, to make it unique
 
-            if (docs.length > 0) {
-                let room = docs[0];
-                let new_joiner_name = joiner;
-                // if player has same name as other player in room, concatenate room_id to name
-                // as many times as necessary, to make it unique
-
-                for (let i = 0; i < room.players.length; i++) {
-                    if (room.players[i].username == new_joiner_name) {
-                        new_joiner_name += "-" + (room._id).substring(0, 5)
-                    }
+            for (let i = 0; i < room.players.length; i++) {
+                if (room.players[i].username == new_joiner_name) {
+                    new_joiner_name += "-" + (room.index);
                 }
-                
-                db.update({
-                    _id: room._id
-                }, {
-                    $push: {
-                        players: {
-                            username: new_joiner_name,
-                            score: 0
-                        }
-                    },
-                    $set: {
-                        num_players: room.num_players + 1
-                    }
-                }, {}, function() {
-                    db.findOne({
-                        _id: room._id
-                    }, function(err, updatedRoom) {
-                        if (err) {
-                            return console.err(err)
-                        }
-                        // send to client new player list with new player inside
-                        socket.join(room._id);
-                        socket.username = new_joiner_name;
-                        socket.room_id = room._id;
-                        socket.isInRoom = true;
-
-                        io.in(room._id).emit('joined_room', {
-                            players: updatedRoom.players,
-                        })
-                        socket.emit('user_join', {
-                            id: updatedRoom._id,
-                            original_joiner_name: joiner,
-                            new_joiner_name: new_joiner_name,
-                            players: updatedRoom.players
-                        })
-                        io.in(room._id).emit('chat_evt', {
-                            evt_type: "player_joined",
-                            username: new_joiner_name
-                        })
-                        socket.is_waiting_next_round = true;
-
-                        /*
-                        socket.emit('wait_next_round');
-                        setTimeout(() => {
-                            io.in(socket.room_id).emit('new_turn', {
-                                current_painter: joiner
-                            })
-                        }, 5000);
-                        */
-
-                    });
-                });
-            } else {
-                // create new public room and join in the first player
-                // start the game with rounds
-                let room = {
-                    room_type: 'public',
-                    room_language: data.locale,
-                    num_players: 1,
-                    players: [{
-                        username: joiner,
-                        score: 0
-                    }, ],
-                    currentWord: 'hola',
-                    currentPainter: 'username',
-                    nextPainter: 'username'
-                }
-
-                db.insert(room, async function(err, newRoom) {
-                    if (err) {
-                        return console.err(err)
-                    }
-                    // Setting socket variables:
-                    socket.join(newRoom._id);
-                    socket.username = joiner;
-                    socket.room_id = newRoom._id;
-                    socket.isInRoom = true;
-
-                    io.in(newRoom._id).emit('joined_room', {
-                        players: room.players,
-                    })
-                    socket.emit('user_join', {
-                        id: newRoom._id,
-                        original_joiner_name: joiner,
-                        new_joiner_name: joiner,
-                        players: room.players,
-                    })
-                    io.in(newRoom._id).emit('chat_evt', {
-                        evt_type: "player_joined",
-                        username: joiner
-                    })
-                    // the first player to join will start the game loop
-                    await start_game_loop(io, socket, db);
-                });
             }
-        });
+            
+            let new_player = {
+                username: new_joiner_name,
+                score: 0
+            }
+            rooms[room.index].players.push(new_player)
+            // send to client new player list with new player inside
+            socket.join(room.index);
+            socket.username = new_joiner_name;
+            socket.room_index = room.index;
+            socket.isInRoom = true;
+
+            io.in(room.index).emit('joined_room', {
+                players: room.players,
+            })
+            socket.emit('user_join', {
+                id: room.index,
+                original_joiner_name: joiner,
+                new_joiner_name: new_joiner_name,
+                players: room.players
+            })
+            io.in(room.index).emit('chat_evt', {
+                evt_type: "player_joined",
+                username: new_joiner_name
+            })
+            socket.is_waiting_next_round = true;
+
+            /*
+            socket.emit('wait_next_round');
+            setTimeout(() => {
+                io.in(socket.room_index).emit('new_turn', {
+                    current_painter: joiner
+                })
+            }, 5000);
+            */
+        } else {
+            // create new public room and join in the first player
+            // start the game with rounds
+            let room = {
+                index: rooms.length,
+                type: 'public',
+                language: data.locale,
+                players: [{
+                    username: joiner,
+                    score: 0
+                }],
+                currentWord: 'hola',
+                currentPainter: 'username',
+                nextPainter: 'username'
+            }
+
+            rooms.push(room);
+
+            // Setting socket variables:
+            socket.join(room.index);
+            socket.username = joiner;
+            socket.room_index = room.index;
+            socket.isInRoom = true;
+            socket.is_waiting_next_round = true;
+
+            io.in(room.index).emit('joined_room', {
+                players: room.players,
+            })
+            socket.emit('user_join', {
+                id: room.index,
+                original_joiner_name: joiner,
+                new_joiner_name: joiner,
+                players: room.players,
+            })
+            io.in(room.index).emit('chat_evt', {
+                evt_type: "player_joined",
+                username: joiner
+            })
+            // the first player to join will start the game loop
+            await start_rounds(io, socket, db);
+        }
     });
 
     socket.on('player_guessed', (data) => {
@@ -201,12 +176,12 @@ io.on('connection', (socket) => {
     })
 
     //drawing
-    socket.on('drawing', (data) => io.in(socket.room_id).emit('drawing', data));
+    socket.on('drawing', (data) => io.in(socket.room_index).emit('drawing', data));
 
     //chat messages 
     socket.on('new_message', (data) => {
         //broadcast the new message to others if it doesn't match word (in the same room).
-        io.in(socket.room_id).emit('new_message', {
+        io.in(socket.room_index).emit('new_message', {
             message: data.message,
             username: data.username
         });
@@ -223,69 +198,48 @@ io.on('connection', (socket) => {
             player_joined
     */
     socket.on('chat_evt', (data) => {
-        io.in(socket.room_id).emit('chat_evt', data);
+        io.in(socket.room_index).emit('chat_evt', data);
     });
     socket.on('clear_canvas', () => {
-        io.in(socket.room_id).emit('clear_canvas');
+        io.in(socket.room_index).emit('clear_canvas');
     });
 
     socket.on('disconnect', function() {
-        console.log('someone left: ' + socket.username + " room id: " + socket.room_id + "isInroom: " + socket.isInRoom)
+        let rooms = gameState.rooms;
+        let room = rooms[socket.room_index]
+        console.log('someone left: ' + socket.username + " room id: " + socket.room_index + "isInroom: " + socket.isInRoom)
         if (socket.isInRoom) {
-            let room_id = socket.room_id;
-            console.log("player: " + socket.username + " left room " + room_id)
-
-            db.findOne({
-                _id: room_id
-            }, function(err, room) {
-                if (err) {
-                    return console.err(err)
-                }
-                if (room.num_players - 1 == 0) {
-                    db.remove({
-                        _id: room_id
-                    }, {}, function(err, numRemoved) {
-                        if (err) {
-                            return console.err(err)
-                        }
-                        io.in(room_id).emit('left_room', {
+                let room_index = socket.room_index;
+                console.log("player: " + socket.username + " left room " + room_index)
+            
+                if (room.players.length - 1 == 0) {
+                    // borrar toda la sala directamente
+                        rooms.splice(socket.room_index, 1)
+                        
+                        io.in(room_index).emit('left_room', {
                             players: []
                         })
                         socket.isInRoom = false;
-                        console.log("Room #ID: " + room_id + " has been removed from database for no players are inside.")
-                    });
+                        console.log("Room #ID: " + room_index + " has been removed from database for no players are inside.")
+                        
                 } else {
-                    db.update({
-                        _id: room_id
-                    }, {
-                        $pull: {
-                            players: {
-                                username: socket.username
-                            }
-                        },
-                        $set: {
-                            num_players: room.num_players - 1
+                    // borrar solo ese jugador
+                        function find_player(player) {
+                            return player.username === socket.username;
                         }
-                    }, {}, function() {
-                        socket.leave(room_id)
-                        db.findOne({
-                            _id: room_id
-                        }, function(err, updatedRoom) {
-                            if (err) {
-                                return console.error(err)
-                            }
-                            io.in(room_id).emit('left_room', {
-                                players: updatedRoom.players
-                            })
-                            io.in(room_id).emit("chat_evt", {
-                                evt_type: "player_left",
-                                username: socket.username
-                            })
-                            socket.isInRoom = false;
-                        });
-                    });
+                        let player_gone = room.players.findIndex(find_player);
+                        room.players.splice(player_gone, 1)
+
+                        socket.leave(room_index)
+                        io.in(room_index).emit('left_room', {
+                            players: room.players
+                        })
+                        io.in(room_index).emit("chat_evt", {
+                            evt_type: "player_left",
+                            username: socket.username
+                        })
+                        socket.isInRoom = false;
                 }
-            })
         }
     });
 })

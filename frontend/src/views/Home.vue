@@ -5,6 +5,9 @@
         <div class="columns is-centered">
           <div class="column is-half">
             <h1 class="title is-size-1 has-text-centered">Pinturillo3</h1>
+            <h1 class="subtitle is-size-3 has-text-centered">
+              Draw, guess and win!
+              </h1>
             <div v-show="showErr" class="notification is-danger">
               <button @click="showErr = false" class="delete"></button>
               Player nick cannot be empty!

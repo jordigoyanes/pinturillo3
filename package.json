@@ -16,7 +16,6 @@
   "dependencies": {
     "nodemon": "^1.14.3",
     "express": "^4.16.2",
-    "nedb": "^1.8.0",
     "path": "^0.12.7",
     "random-spanish-words": "^2.0.0",
     "random-words": "^1.1.0",
