@@ -33,6 +33,7 @@
               <div class="letter_box"></div>
               <div class="letter_box">S</div>
             </div>
+            <div id="round">1/3</div>
           </div>
           <Toolbox />
           <DrawingArea />
@@ -111,16 +112,15 @@ export default {
 #word {
   display: flex;
   align-items: flex-end;
-  margin: 0 auto;
 }
 #word-top {
   display: flex;
   align-items: center;
-  padding: 1em;
+  padding: 0.5em 1em;
   border-radius: 6px 6px 0px 0px;
+  justify-content: space-between;
 }
 #clock {
-  position: absolute;
   width: 3rem;
   height: 3rem;
   font-family: "Kalam", cursive;

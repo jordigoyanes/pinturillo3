@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express();
 const path = require('path');
-var start_rounds = require("./gameLoop.js");
+var start_game = require("./gameLoop.js");
 
 //middlewares
 app.use(express.static(path.resolve(__dirname, './frontend/dist')));
@@ -165,7 +165,7 @@ io.on('connection', (socket) => {
                 username: joiner
             })
             // the first player to join will start the game loop
-            await start_rounds(io, socket, db);
+            await start_game(io, gameState, room.index);
         }
     });
 

@@ -15,11 +15,15 @@ export default new Vuex.Store({
     isDrawing: false,
     room_id: null,
     players: null,
+    current_round: 1,
     i18n: i18n,
     brush_color: "red",
     brush_width: 4
   },
   mutations: {
+    set_current_round(state, payload){
+      state.current_round = payload;
+    },
     set_brush_color(state, payload) {
       state.brush_color = payload;
     },
