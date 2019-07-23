@@ -8,7 +8,7 @@
           </button>
         </div>
         <h1 id="game-title" class="is-size-3 level-item has-text-centered">
-          Pinturillo 3
+          Pintanary
         </h1>
         <div class="level-item level-right">
           <div class="tags has-addons">
@@ -24,7 +24,7 @@
         <div id="drawing-column" class="span-col-5 span-row-85">
           <div id="word-top" class="whitebox has-background-danger">
             <div id="clock">
-              <div id="sec">17</div>
+              <div id="sec">{{turn_clock}}</div>
             </div>
             <div id="word">
               <div class="letter_box">N</div>
@@ -54,7 +54,9 @@ export default {
   name: "game",
   data: function() {
     return {
-      isWaitingNextTurn: true
+      isWaitingNextTurn: true,
+      turn_clock: 60,
+      ready_sec: 3,
     };
   },
   components: {
@@ -101,14 +103,20 @@ export default {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
-    this.socket.on("countdown_sec", data => {
-      console.log("Second: " + data.secs);
+    this.socket.on("turn_countdown_sec", data => {
+      this.turn_clock = data.sec;
+      console.log("Second: " + data.sec);
     });
   }
 };
 </script>
 
 <style lang="scss">
+#round{
+  font-family: "Kalam", cursive;
+  font-size: 1.5em;
+  font-weight: bold;
+}
 #word {
   display: flex;
   align-items: flex-end;

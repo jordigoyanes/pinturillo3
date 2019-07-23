@@ -7,12 +7,21 @@ Stores user and game data using nedb.
 [LIVE DEMO](https://pinturillo3.herokuapp.com)  
 ![Drag Racing](https://raw.githubusercontent.com/jordigoyanes/pinturillo3/master/docs/images/screenshot1.PNG)
 
+
 ### FEATURES:
 - [x] Join public rooms
 - [x] Real-time drawing with real-time chat
 - [x] Language selection (English or Spanish)
 - [ ] Create and join private rooms
 - [ ] Fancy animations when users guess the word
+
+Game loop is still WIP
+
+Maybe in the future
+
+- User accounts with stats and saved drawings
+- Premium account without ads and limitless storage of drawings
+- Competitive Pintanary, tournaments for money, RANKETS!!
 
 #### Test locally
 First build the vue frontend:

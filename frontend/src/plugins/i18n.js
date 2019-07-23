@@ -5,6 +5,7 @@ Vue.use(VueI18n);
 
 const messages = {
   English: {
+    desc: "Draw, guess and win!",
     nickname: "Nickname:",
     play: "Play!",
     leave_room: "Leave Room",
@@ -12,7 +13,7 @@ const messages = {
     play_public: "Public Room",
     play_private: "Private Room",
     public_desc: "Play with anybody online",
-    private_desc: "Play only with your friends in a private room",
+    private_desc: "Play with friends in a private room",
     join_room: "Join Room",
     create_room: "Create Room",
     chat_evt: {
@@ -24,6 +25,7 @@ const messages = {
     }
   },
   Español: {
+    desc: "Dibuja, adivina y gana!",
     nickname: "Nombre:",
     play: "Jugar!",
     leave_room: "Salir de la sala",

@@ -2,7 +2,7 @@
   <section class="hero is-dark is-fullheight">
     <div class="hero-body">
       <div class="container is-mobile">
-        <h1 class="title is-size-1 has-text-centered">Pinturillo3</h1>
+        <h1 class="title is-size-1 has-text-centered">Pintanary</h1>
         <div v-if="!isLoading" class="columns">
           <div class="column">
             <div

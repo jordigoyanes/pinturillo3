@@ -215,10 +215,11 @@ io.on('connection', (socket) => {
                 if (room.players.length - 1 == 0) {
                     // borrar toda la sala directamente
                         rooms.splice(socket.room_index, 1)
-                        
+
                         io.in(room_index).emit('left_room', {
                             players: []
                         })
+                        
                         socket.isInRoom = false;
                         console.log("Room #ID: " + room_index + " has been removed from database for no players are inside.")
                         
