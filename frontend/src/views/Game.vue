@@ -33,7 +33,7 @@
               <div class="letter_box"></div>
               <div class="letter_box">S</div>
             </div>
-            <div id="round">1/3</div>
+            <div id="round">{{current_round}}/3</div>
           </div>
           <Toolbox />
           <DrawingArea />
@@ -79,11 +79,13 @@ export default {
       set_playerlist: "set_playerlist",
       set_logged: "set_logged",
       set_score: "set_score",
-      set_localplayer: "set_localplayer"
+      set_localplayer: "set_localplayer",
+      set_current_round: "set_current_round"
     })
   },
   computed: {
     ...mapState({
+      current_round: "current_round",
       socket: "socket",
       room_id: "room_id",
       localPlayer: "localPlayer",
@@ -91,6 +93,9 @@ export default {
     })
   },
   mounted() {
+    this.socket.on("update_round", data => {
+      this.set_current_round(data.round);
+    });
     this.socket.on("left_room", newData => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));

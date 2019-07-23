@@ -3,7 +3,7 @@ async function start_game(io, gameState, room_index){
     let current_room = rooms[room_index];
     current_room.current_round = 1;
     current_room.painter_index = 0;
-    
+    io.in(room_index).emit('update_round',{round: current_room.current_round})
     /*
     5 segundos para esperar a que acabe el turno
     7 segundos para elegir una de las 3 palabras a dibujar. 
@@ -13,24 +13,24 @@ async function start_game(io, gameState, room_index){
     */
     //if room still exists (meaning there's players inside)
     if(current_room){
-      start_turn(io, rooms, room_index)
-      //start_game(io, gameState, room_index)
+        start_turn(io, gameState ,room_index)
+      //show final scoreboard of game
     }
-    //console.log("loop stoped cuz no players inside")        
-
+    
 }
 
-function start_turn(io, rooms, room_index){
+function start_turn(io, gameState ,room_index){
+    let rooms = gameState.rooms;
     // recursive function that will will give a turn for every player online for 3 rounds.
     if(rooms[room_index]){
         let current_room = rooms[room_index];
-        
         let current_turn = {
             is_canceled: false,
             num_reports: 0,
             guessed:[  /* EXAMPLE => username: jordi, points_gained:234 */]
         }
         current_room.current_turn = current_turn;
+        
         console.log("this is current round: "+current_room.current_round)
         
         // TURN START
@@ -38,6 +38,8 @@ function start_turn(io, rooms, room_index){
         /*todo
     
         Give 3 word choices to the painter
+
+        current_turn.word = d
     
         */
     
@@ -50,7 +52,7 @@ function start_turn(io, rooms, room_index){
             if(sec === 0){
                 clearInterval(interval);
                 io.in(room_index).emit('start_drawing',{username: current_room.players[current_room.painter_index].username});
-                countdown_60_sec(io, rooms, room_index);
+                countdown_60_sec(io, room_index, gameState);
                
             }else{
                 console.log(sec)
@@ -60,8 +62,8 @@ function start_turn(io, rooms, room_index){
     }
 }
 
-async function countdown_60_sec(io, rooms, room_index){
-
+async function countdown_60_sec(io, room_index, gameState){
+    let rooms = gameState.rooms;
     let current_room = rooms[room_index];
 
     let sec = 60;
@@ -77,6 +79,7 @@ async function countdown_60_sec(io, rooms, room_index){
             cancels turn
             disconnects
             get reported by all other players.
+            get reported by all other players.
         */
         let num_other_players = (current_room.players.length) - 1
         //console.log(this is )
@@ -89,34 +92,27 @@ async function countdown_60_sec(io, rooms, room_index){
             || !rooms[room_index]
         ){
             clearInterval(interval);
-            start_turn(io, rooms, room_index);
+                let isEndOfRound = current_room.painter_index + 1 == current_room.players.length;
+
+                if(current_room.current_round != 3 && isEndOfRound){
+                    current_room.painter_index = 0;
+                    current_room.current_round++;
+                    io.in(room_index).emit('update_round',{round: current_room.current_round})
+                    start_turn(io, gameState ,room_index);
+                }else if(current_room.current_round <= 3 && !isEndOfRound){
+                    current_room.painter_index++;
+                    start_turn(io, gameState ,room_index);
+                }else if(current_room.current_round == 3 && isEndOfRound){
+                    // if it is the end of the last round, the recursive loop will stop here 
+                    // to show the final scoreboard and then run the game loop again.
+                    console.log("GAME IS OVER!!!!")
+                    console.log("here show the scoreboards")
+                    console.log("new game started")
+    
+                    start_game(io, gameState, room_index)  
+                }
         }
-        console.log("this is current room: ");console.log(rooms[room_index])
     }, 1000);
 }
-
-
-function wait_5_sec(io, room_index){
-    function notify_sec() {
-        console.log("5 sec countdown ended")
-        //console.log("Seconds: "+sec)
-        //io.in(room_index).emit('wait_finished',{sec: sec})
-    }
-    return new Promise(resolve => {
-        setTimeout(() => resolve(notify_sec()), 5000)
-    });
-}
-async function countdown_3_sec(io, room_index){
-    let sec = 3;
-    for(let i=3; i > 0; i--){
-        await new Promise(resolve => setTimeout(() => resolve(notify_sec()), 1000));
-        sec--
-    }
-    function notify_sec() {
-        console.log("Seconds: "+sec)
-        io.in(room_index).emit('countdown_sec',{sec: sec})
-    }
-}
-
 
 module.exports = start_game;
