@@ -70,6 +70,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join_public_room', async (data) => {
+        
         let rooms = gameState.rooms
         //join public room with public type, only takes username
         // check if public, has less than MAX_PLAYERS and same language
@@ -137,9 +138,6 @@ io.on('connection', (socket) => {
                     username: joiner,
                     score: 0
                 }],
-                currentWord: 'hola',
-                currentPainter: 'username',
-                nextPainter: 'username'
             }
 
             rooms.push(room);
@@ -165,8 +163,10 @@ io.on('connection', (socket) => {
                 username: joiner
             })
             // the first player to join will start the game loop
+            
             await start_game(io, gameState, room.index);
         }
+       
     });
 
     socket.on('player_guessed', (data) => {
@@ -176,15 +176,44 @@ io.on('connection', (socket) => {
     })
 
     //drawing
-    socket.on('drawing', (data) => io.in(socket.room_index).emit('drawing', data));
+    socket.on('drawing', (data) => {
+        let room = gameState.rooms[socket.room_index];
+        function find_player(player) {
+            return player.username === socket.username;
+        }
+        let painter = room.players.findIndex(find_player);
+        if(painter == room.painter_index){
+            io.in(socket.room_index).emit('drawing', data)
+        }
+    });
 
     //chat messages 
     socket.on('new_message', (data) => {
-        //broadcast the new message to others if it doesn't match word (in the same room).
-        io.in(socket.room_index).emit('new_message', {
-            message: data.message,
-            username: data.username
+        let room = gameState.rooms[socket.room_index];
+        let word = room.current_turn.word;
+        let has_already_guessed = gameState.rooms[socket.room_index].current_turn.guessed.find(function(already_guessed) {
+        return already_guessed.username == socket.username;
         });
+
+        if((data.message).includes(word) && word != ""){
+            if(!has_already_guessed){
+                // change score
+            }
+        }else{
+            //broadcast the new message to others if it doesn't match word (in the same room).
+            io.in(socket.room_index).emit('new_message', {
+                message: data.message,
+                username: data.username
+            });
+        }
+    });
+    socket.on('choose_word', (data) => {
+        let room = gameState.rooms[socket.room_index];
+        let word = room.current_turn.word;
+        // must be valid index
+        if(data.option_index >=0 && data.option_index <=3){
+            word = room.current_turn.options[data.option_index]
+        }
     });
     // CHAT EVENTS (emitted from the server only)
     /*  
@@ -208,36 +237,37 @@ io.on('connection', (socket) => {
         let rooms = gameState.rooms;
         let room = rooms[socket.room_index]
         console.log('someone left: ' + socket.username + " room id: " + socket.room_index + "isInroom: " + socket.isInRoom)
-        if (socket.isInRoom) {
-                let room_index = socket.room_index;
-                console.log("player: " + socket.username + " left room " + room_index)
-                
-                if (room.players.length - 1 == 0) {
-                    // borrar toda la sala directamente
-                        rooms.splice(socket.room_index, 1)
-
-                        io.in(room_index).emit('left_room', {
-                            players: []
-                        })
-                        socket.isInRoom = false;
-                        console.log("Room #ID: " + room_index + " has been removed from database for no players are inside.")
-                } else {
-                    // borrar solo ese jugador
-                        function find_player(player) {
-                            return player.username === socket.username;
-                        }
-                        let player_gone = room.players.findIndex(find_player);
-                        room.players.splice(player_gone, 1)
-                        socket.leave(room_index)
-                        io.in(room_index).emit('left_room', {
-                            players: room.players
-                        })
-                        io.in(room_index).emit("chat_evt", {
-                            evt_type: "player_left",
-                            username: socket.username
-                        })
-                        socket.isInRoom = false;
+        if (socket.isInRoom && room) {
+            let room_index = socket.room_index;
+            console.log("player: " + socket.username + " left room " + room_index)
+            if (room.players.length - 1 == 0) {
+                // borrar toda la sala directamente
+                rooms.splice(socket.room_index, 1)
+                io.in(room_index).emit('left_room', {
+                    players: []
+                })
+                socket.isInRoom = false;
+                console.log("Room #ID: " + room_index + " has been removed from database for no players are inside.")
+            } else {
+                // borrar solo ese jugador
+                function find_player(player) {
+                    return player.username === socket.username;
                 }
+                let player_gone = room.players.findIndex(find_player);
+                if(player_gone == room.painter_index){
+                    room.current_turn.painter_left = true;
+                }
+                room.players.splice(player_gone, 1)
+                socket.leave(room_index)
+                io.in(room_index).emit('left_room', {
+                    players: room.players
+                })
+                io.in(room_index).emit("chat_evt", {
+                    evt_type: "player_left",
+                    username: socket.username
+                })
+                socket.isInRoom = false;
+            }
         }
     });
 })

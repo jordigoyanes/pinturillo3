@@ -1,22 +1,19 @@
 <template>
   <div>
-    <section class="section has-background-dark">
-      <div class="level">
-        <div class="level-item level-left">
+    <section id="top-bar" class="section has-background-dark">
           <button @click="leave()" class="button is-dark ">
             {{ $t("leave_room") }}
           </button>
-        </div>
+        
         <h1 id="game-title" class="is-size-3 level-item has-text-centered">
           Pintanary
         </h1>
-        <div class="level-item level-right">
+        
           <div class="tags has-addons">
             <span class="tag is-dark">Room ID</span>
             <span class="tag is-warning">{{ this.room_id }}</span>
           </div>
-        </div>
-      </div>
+
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
       <div id="game-columns" class="grid">
@@ -35,8 +32,23 @@
             </div>
             <div id="round">{{current_round}}/3</div>
           </div>
-          <Toolbox />
-          <DrawingArea />
+          <div id="drawing-area" v-if="true" class="has-background-warning">
+            <div id="word-selector">
+              <div v-for="(option, index) in options" :key=index class="word_option" >
+                {{option}}
+              </div>
+            </div>
+            <Toolbox />
+            <DrawingArea />
+          </div>
+          <div id="gray-bg" v-else>
+              <div id="going_to_draw">
+
+              </div>
+              <div id="scoreboard">
+                
+              </div>
+          </div>
         </div>
         <Chatbox />
       </div>
@@ -57,6 +69,7 @@ export default {
       isWaitingNextTurn: true,
       turn_clock: 60,
       ready_sec: 3,
+      options: [],
     };
   },
   components: {
@@ -93,6 +106,11 @@ export default {
     })
   },
   mounted() {
+    console.log("THIS IS MY SOCKET ID: "+this.socket.id)
+     this.socket.on("show_options", data => {
+      console.log("estas son mis opciones: "+data)
+      this.options = data;
+    });
     this.socket.on("update_round", data => {
       this.set_current_round(data.round);
     });
@@ -117,6 +135,36 @@ export default {
 </script>
 
 <style lang="scss">
+#top-bar{
+  display:flex;
+  justify-content: space-around;
+}
+#word-selector{
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.5em;
+  color: #363636;
+  font-weight: bold;
+  text-transform: uppercase;
+  
+}
+.word_option{
+  flex: 1;
+  text-align: center;
+  padding:0.5em;
+}
+.word_option:hover{
+  cursor:pointer;
+}
+#drawing-area{
+  flex:1;
+}
+#gray-bg{
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23CCC' stroke-width='0' %3E%3Crect fill='%23F5F5F5' x='-60' y='-60' width='110' height='240'/%3E%3C/g%3E%3C/svg%3E");
+  flex:1;
+}
 #round{
   font-family: "Kalam", cursive;
   font-size: 1.5em;
@@ -183,6 +231,8 @@ h1#game-title:nth-child(0) {
 }
 #drawing-column {
   border-radius: 0px 0px 6px 6px;
+  display: flex;
+  flex-direction: column;
 }
 .grid {
   display: grid;

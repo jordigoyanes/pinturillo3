@@ -5,17 +5,18 @@ var en = require('random-words');
 
 
 // generate 3 random words for the player to choose from:
-exports.genWords = function(lang){
+var genWords = function(lang){
     let words;
 
     switch (lang) {
-        case 'es':
+        case 'Español':
             words = es({ exactly: 3 });
             break;
-        case 'en':
+        case 'English':
             words = en({ exactly: 3 });
             break;
     }
 
     return words;
 }
+module.exports = genWords;

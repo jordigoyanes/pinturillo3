@@ -10,6 +10,9 @@ $section-padding: 0.8rem 1.5rem;
 @import "../node_modules/bulma/bulma.sass";
 @import url("https://fonts.googleapis.com/css?family=Kalam");
 
+body{
+  user-select:none;   
+}
 h1 {
   font-family: "Kalam", cursive;
 }
