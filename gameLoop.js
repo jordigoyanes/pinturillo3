@@ -91,8 +91,8 @@ function start_turn(io, gameState ,room_index){
 async function countdown_60_sec(io, room_index, gameState){
     let rooms = gameState.rooms;
     let current_room = rooms[room_index];
+    let sec = 99;
     if(current_room){
-        let sec = 3;
         let current_turn = current_room.current_turn;
         console.log(sec)
         io.in(current_room.index).emit('turn_countdown_sec',{sec: sec})
@@ -151,7 +151,6 @@ async function countdown_60_sec(io, room_index, gameState){
             }
         }, 1000);
     }
-    
 }
 
 module.exports = start_game;

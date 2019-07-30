@@ -5,7 +5,10 @@ import i18n from "@/plugins/i18n";
 
 Vue.use(Vuex);
 
-const socketlink = process.env.NODE_ENV === "production" ? "https://pinturillo3.herokuapp.com" : "localhost:3000"
+const socketlink =
+  process.env.NODE_ENV === "production"
+    ? "https://pinturillo3.herokuapp.com"
+    : "localhost:3000";
 
 export default new Vuex.Store({
   state: {
@@ -21,7 +24,7 @@ export default new Vuex.Store({
     brush_width: 4
   },
   mutations: {
-    set_current_round(state, payload){
+    set_current_round(state, payload) {
       state.current_round = payload;
     },
     set_brush_color(state, payload) {

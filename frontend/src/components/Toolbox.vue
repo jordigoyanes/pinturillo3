@@ -150,7 +150,7 @@ export default {
   padding: 5px;
   justify-content: space-around;
 }
-#clean-canvas { 
+#clean-canvas {
   background-color: white;
   padding: 5px;
   border-radius: 5px;

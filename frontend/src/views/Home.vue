@@ -7,7 +7,7 @@
             <h1 class="title is-size-1 has-text-centered">Pintanary</h1>
             <h1 class="subtitle is-size-3 has-text-centered">
               {{ $t("desc") }}
-              </h1>
+            </h1>
             <div v-show="showErr" class="notification is-danger">
               <button @click="showErr = false" class="delete"></button>
               Player nick cannot be empty!

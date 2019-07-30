@@ -134,8 +134,9 @@ export default {
 
 <style lang="scss">
 #canvas {
-  flex:1;
+  flex: 1;
   background-color: white;
-  box-shadow:  inset 0px 1px 6px rgba(0, 0, 0, 0.16), inset 0px 1px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: inset 0px 1px 6px rgba(0, 0, 0, 0.16),
+    inset 0px 1px 6px rgba(0, 0, 0, 0.23);
 }
 </style>

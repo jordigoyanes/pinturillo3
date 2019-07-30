@@ -236,10 +236,10 @@ io.on('connection', (socket) => {
     socket.on('disconnect', function() {
         let rooms = gameState.rooms;
         let room = rooms[socket.room_index]
-        console.log('someone left: ' + socket.username + " room id: " + socket.room_index + "isInroom: " + socket.isInRoom)
-        if (socket.isInRoom && room) {
+        console.log('someone left: ' + socket.username + " room id: " + socket.room_index + " isInroom: " + socket.isInRoom +" room_index: "+socket.room_index)
+        
+        if (socket && socket.isInRoom && room) {
             let room_index = socket.room_index;
-            console.log("player: " + socket.username + " left room " + room_index)
             if (room.players.length - 1 == 0) {
                 // borrar toda la sala directamente
                 rooms.splice(socket.room_index, 1)
@@ -247,7 +247,10 @@ io.on('connection', (socket) => {
                     players: []
                 })
                 socket.isInRoom = false;
+                socket.leave(room_index)
                 console.log("Room #ID: " + room_index + " has been removed from database for no players are inside.")
+                console.log("This is gamestate: ")
+                console.log(gameState)
             } else {
                 // borrar solo ese jugador
                 function find_player(player) {
@@ -258,6 +261,10 @@ io.on('connection', (socket) => {
                     room.current_turn.painter_left = true;
                 }
                 room.players.splice(player_gone, 1)
+                console.log("This is gamestate: ")
+                console.log(gameState)
+                
+                socket.isInRoom = false;
                 socket.leave(room_index)
                 io.in(room_index).emit('left_room', {
                     players: room.players
@@ -266,7 +273,6 @@ io.on('connection', (socket) => {
                     evt_type: "player_left",
                     username: socket.username
                 })
-                socket.isInRoom = false;
             }
         }
     });

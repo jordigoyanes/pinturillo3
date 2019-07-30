@@ -1,19 +1,18 @@
 <template>
   <div>
     <section id="top-bar" class="section has-background-dark">
-          <button @click="leave()" class="button is-dark ">
-            {{ $t("leave_room") }}
-          </button>
-        
-        <h1 id="game-title" class="is-size-3 level-item has-text-centered">
-          Pintanary
-        </h1>
-        
-          <div class="tags has-addons">
-            <span class="tag is-dark">Room ID</span>
-            <span class="tag is-warning">{{ this.room_id }}</span>
-          </div>
+      <button @click="leave()" class="button is-dark ">
+        {{ $t("leave_room") }}
+      </button>
 
+      <h1 id="game-title" class="is-size-3 level-item has-text-centered">
+        Pintanary
+      </h1>
+
+      <div class="tags has-addons">
+        <span class="tag is-dark">Room ID</span>
+        <span class="tag is-warning">{{ this.room_id }}</span>
+      </div>
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
       <div id="game-columns" class="grid">
@@ -21,7 +20,7 @@
         <div id="drawing-column" class="span-col-5 span-row-85">
           <div id="word-top" class="whitebox has-background-danger">
             <div id="clock">
-              <div id="sec">{{turn_clock}}</div>
+              <div id="sec">{{ turn_clock }}</div>
             </div>
             <div id="word">
               <div class="letter_box">N</div>
@@ -30,24 +29,24 @@
               <div class="letter_box"></div>
               <div class="letter_box">S</div>
             </div>
-            <div id="round">{{current_round}}/3</div>
+            <div id="round">{{ current_round }}/3</div>
           </div>
           <div id="drawing-area" v-if="false" class="has-background-warning">
             <div id="word-selector">
-              <div v-for="(option, index) in options" :key=index class="word_option" >
-                {{option}}
+              <div
+                v-for="(option, index) in options"
+                :key="index"
+                class="word_option"
+              >
+                {{ option }}
               </div>
             </div>
             <Toolbox />
             <DrawingArea />
           </div>
           <div id="gray-bg" v-else>
-              <div id="going_to_draw">
-
-              </div>
-              <div id="scoreboard">
-                
-              </div>
+            <div id="going_to_draw"></div>
+            <div id="scoreboard"></div>
           </div>
         </div>
         <Chatbox />
@@ -69,7 +68,7 @@ export default {
       isWaitingNextTurn: true,
       turn_clock: 60,
       ready_sec: 3,
-      options: [],
+      options: []
     };
   },
   components: {
@@ -80,6 +79,7 @@ export default {
   },
   methods: {
     leave() {
+      this.socket.removeAllListeners();
       this.socket.disconnect();
       this.set_logged(false);
       this.set_playerlist(null);
@@ -106,14 +106,9 @@ export default {
     })
   },
   mounted() {
-    this.socket.on('disconnect', function () {
-      this.$router.push({ path: "/" });
-      console.log('Client disconnected from inactivity');
-    });
-
-    console.log("THIS IS MY SOCKET ID: "+this.socket.id)
-     this.socket.on("show_options", data => {
-      console.log("estas son mis opciones: "+data)
+    console.log("THIS IS MY SOCKET ID: " + this.socket.id);
+    this.socket.on("show_options", data => {
+      console.log("estas son mis opciones: " + data);
       this.options = data;
     });
     this.socket.on("update_round", data => {
@@ -140,11 +135,11 @@ export default {
 </script>
 
 <style lang="scss">
-#top-bar{
-  display:flex;
+#top-bar {
+  display: flex;
   justify-content: space-around;
 }
-#word-selector{
+#word-selector {
   align-items: center;
   display: flex;
   justify-content: space-around;
@@ -152,25 +147,24 @@ export default {
   color: #363636;
   font-weight: bold;
   text-transform: uppercase;
-  
 }
-.word_option{
+.word_option {
   flex: 1;
   text-align: center;
-  padding:0.5em;
+  padding: 0.5em;
 }
-.word_option:hover{
-  cursor:pointer;
+.word_option:hover {
+  cursor: pointer;
 }
-#drawing-area{
-  flex:1;
+#drawing-area {
+  flex: 1;
 }
-#gray-bg{
+#gray-bg {
   background-color: #ffffff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23CCC' stroke-width='0' %3E%3Crect fill='%23F5F5F5' x='-60' y='-60' width='110' height='240'/%3E%3C/g%3E%3C/svg%3E");
-  flex:1;
+  flex: 1;
 }
-#round{
+#round {
   font-family: "Kalam", cursive;
   font-size: 1.5em;
   font-weight: bold;
