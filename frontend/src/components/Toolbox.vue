@@ -148,6 +148,7 @@ export default {
 #toolbox {
   display: flex;
   padding: 5px;
+  justify-content: space-around;
 }
 #clean-canvas { 
   background-color: white;

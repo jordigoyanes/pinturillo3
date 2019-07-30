@@ -91,65 +91,67 @@ function start_turn(io, gameState ,room_index){
 async function countdown_60_sec(io, room_index, gameState){
     let rooms = gameState.rooms;
     let current_room = rooms[room_index];
-
-    let sec = 99;
-    let current_turn = current_room.current_turn;
-    console.log(sec)
-    io.in(current_room.index).emit('turn_countdown_sec',{sec: sec})
-
-    let interval = setInterval(() => {
-        sec--
-        //console.log(sec)
+    if(current_room){
+        let sec = 3;
+        let current_turn = current_room.current_turn;
+        console.log(sec)
         io.in(current_room.index).emit('turn_countdown_sec',{sec: sec})
-        /* error message if painter:
-            cancels turn
-            disconnects
-            get reported by all other players.
-            get reported by all other players.
-        */
-        let num_other_players = (current_room.players.length) - 1
-        let is_painter_reported = current_turn.num_reports == num_other_players && current_turn.num_reports !=0;
-
-        if(
-            is_painter_reported
-            || current_turn.is_canceled 
-            || current_turn.painter_left
-            || sec === 0
-            || (current_turn.guessed.length == num_other_players && current_turn.guessed.length !=0)
-            || !rooms[room_index]
-        ){
-            clearInterval(interval);
-            if(current_turn.painter_left){
-                io.in(room_index).emit('painter_left')
+    
+        let interval = setInterval(() => {
+            sec--
+            //console.log(sec)
+            io.in(current_room.index).emit('turn_countdown_sec',{sec: sec})
+            /* error message if painter:
+                cancels turn
+                disconnects
+                get reported by all other players.
+                get reported by all other players.
+            */
+            let num_other_players = (current_room.players.length) - 1
+            let is_painter_reported = current_turn.num_reports == num_other_players && current_turn.num_reports !=0;
+    
+            if(
+                is_painter_reported
+                || current_turn.is_canceled 
+                || current_turn.painter_left
+                || sec === 0
+                || (current_turn.guessed.length == num_other_players && current_turn.guessed.length !=0)
+                || !rooms[room_index]
+            ){
+                clearInterval(interval);
+                if(current_turn.painter_left){
+                    io.in(room_index).emit('painter_left')
+                }
+                if(current_turn.is_canceled){
+                    io.in(room_index).emit('painter_canceled')
+                }
+                if(is_painter_reported){
+                    io.in(room_index).emit('painter_reported')
+                }
+                let isEndOfRound = current_room.painter_index + 1 == current_room.players.length;
+                
+                if(current_room.current_round != 3 && isEndOfRound){
+                    current_room.painter_index = 0;
+                    current_room.current_round++;
+                    io.in(room_index).emit('update_round',{round: current_room.current_round})
+                    start_turn(io, gameState ,room_index);
+                }else if(current_room.current_round <= 3 && !isEndOfRound){
+                    current_room.painter_index++;
+                    start_turn(io, gameState ,room_index);
+                }else if(current_room.current_round == 3 && isEndOfRound){
+                    // if it is the end of the last round, the recursive loop will stop here 
+                    // to show the final scoreboard and then run the game loop again.
+                    console.log("GAME IS OVER!!!!")
+                    console.log("here show the scoreboards")
+    
+                    console.log("new game started")
+    
+                    start_game(io, gameState, room_index)  
+                }
             }
-            if(current_turn.is_canceled){
-                io.in(room_index).emit('painter_canceled')
-            }
-            if(is_painter_reported){
-                io.in(room_index).emit('painter_reported')
-            }
-            let isEndOfRound = current_room.painter_index + 1 == current_room.players.length;
-            
-            if(current_room.current_round != 3 && isEndOfRound){
-                current_room.painter_index = 0;
-                current_room.current_round++;
-                io.in(room_index).emit('update_round',{round: current_room.current_round})
-                start_turn(io, gameState ,room_index);
-            }else if(current_room.current_round <= 3 && !isEndOfRound){
-                current_room.painter_index++;
-                start_turn(io, gameState ,room_index);
-            }else if(current_room.current_round == 3 && isEndOfRound){
-                // if it is the end of the last round, the recursive loop will stop here 
-                // to show the final scoreboard and then run the game loop again.
-                console.log("GAME IS OVER!!!!")
-                console.log("here show the scoreboards")
-
-                console.log("new game started")
-
-                start_game(io, gameState, room_index)  
-            }
-        }
-    }, 1000);
+        }, 1000);
+    }
+    
 }
 
 module.exports = start_game;

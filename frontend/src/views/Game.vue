@@ -32,7 +32,7 @@
             </div>
             <div id="round">{{current_round}}/3</div>
           </div>
-          <div id="drawing-area" v-if="true" class="has-background-warning">
+          <div id="drawing-area" v-if="false" class="has-background-warning">
             <div id="word-selector">
               <div v-for="(option, index) in options" :key=index class="word_option" >
                 {{option}}
@@ -106,6 +106,11 @@ export default {
     })
   },
   mounted() {
+    this.socket.on('disconnect', function () {
+      this.$router.push({ path: "/" });
+      console.log('Client disconnected from inactivity');
+    });
+
     console.log("THIS IS MY SOCKET ID: "+this.socket.id)
      this.socket.on("show_options", data => {
       console.log("estas son mis opciones: "+data)

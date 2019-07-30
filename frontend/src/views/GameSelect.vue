@@ -78,6 +78,7 @@ export default {
     })
   },
   mounted() {
+    
     if (!this.socket.connected) {
       this.socket.connect();
     }
