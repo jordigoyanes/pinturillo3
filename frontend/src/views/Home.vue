@@ -10,7 +10,7 @@
             </h1>
             <div v-show="showErr" class="notification is-danger">
               <button @click="showErr = false" class="delete"></button>
-              Player nick cannot be empty!
+              {{ $t("not_empty") }}
             </div>
             <div class="box">
               <div class="field">

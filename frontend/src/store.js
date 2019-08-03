@@ -19,11 +19,15 @@ export default new Vuex.Store({
     room_id: null,
     players: null,
     current_round: 1,
+    current_word: "?",
     i18n: i18n,
-    brush_color: "red",
+    brush_color: "black",
     brush_width: 4
   },
   mutations: {
+    set_word(state, payload) {
+      state.current_word = payload;
+    },
     set_current_round(state, payload) {
       state.current_round = payload;
     },

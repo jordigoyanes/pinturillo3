@@ -26,7 +26,7 @@ function start_turn(io, gameState ,room_index){
     if(rooms[room_index]){
         let current_room = rooms[room_index];
         let current_turn = {
-            word: "",
+            word: "?",
             painter_left: false,
             is_canceled: false,
             num_reports: 0,
@@ -63,35 +63,44 @@ function start_turn(io, gameState ,room_index){
 
         /*todo: REMOVE AFK PLAYERS!!
 
-        Give 3 word choices to the painter
+        Give 3 wofgrd choices to the painter
 
         current_turn.word = d
     
         */
+    let choose_sec = 7;
+    var wait_for_choosing = setInterval(function(){
+        choose_sec--;
+        if(choose_sec === 0 && current_turn.word =="?"){
+            clearInterval(wait_for_choosing);
+            current_turn.word = options[chosen_word]
+            // 3 second countdown to get ready to draw
+                let get_ready_sec = 3;
+                console.log(get_ready_sec)
+                io.in(room_index).emit('get_ready_sec',{sec: get_ready_sec})
+                var get_ready_interval = setInterval(function(){
+                get_ready_sec--;
+                if(get_ready_sec === 0){
+                    clearInterval(get_ready_interval);
+                    io.to(painter_socket_id).emit('start_drawing',{word: "papa"});
+                    countdown_60_sec(io, room_index, gameState);
 
-        // 3 second countdown to get ready to draw
-        let sec = 3;
-        console.log(sec)
-        io.in(room_index).emit('get_ready_sec',{sec: sec})
-        var interval = setInterval(function(){
-            sec--;
-            if(sec === 0){
-                clearInterval(interval);
-                //painter_socket.emit('start_drawing',{word: "papa"});
-                countdown_60_sec(io, room_index, gameState);
-               
-            }else{
-                console.log(sec)
-                io.in(room_index).emit('get_ready_sec',{sec: sec})
-            }
-        }, 1000)
+                }else{
+                    console.log(get_ready_sec)
+                    io.in(room_index).emit('get_ready_sec',{sec: get_ready_sec})
+                }
+            }, 1000)
+           
+        }
+    }, 1000)
+
     }
 }
 
 async function countdown_60_sec(io, room_index, gameState){
     let rooms = gameState.rooms;
     let current_room = rooms[room_index];
-    let sec = 99;
+    let sec = 3;
     if(current_room){
         let current_turn = current_room.current_turn;
         console.log(sec)

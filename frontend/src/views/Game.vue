@@ -23,29 +23,31 @@
               <div id="sec">{{ turn_clock }}</div>
             </div>
             <div id="word">
-              <div class="letter_box">N</div>
-              <div class="letter_box">U</div>
-              <div class="letter_box"></div>
-              <div class="letter_box"></div>
-              <div class="letter_box">S</div>
+              <div v-for="(letter, index) in word" :key="index" class="letter_box">{{letter}}</div>
+              
             </div>
             <div id="round">{{ current_round }}/3</div>
           </div>
-          <div id="drawing-area" v-if="false" class="has-background-warning">
-            <div id="word-selector">
+            <div v-if="show_options" id="word-selector">
               <div
                 v-for="(option, index) in options"
                 :key="index"
                 class="word_option"
+                @click="choose_word({option_index: index})"
               >
                 {{ option }}
               </div>
             </div>
+          <div id="drawing-area" v-if="enable_drawing" class="has-background-warning">
             <Toolbox />
             <DrawingArea />
           </div>
           <div id="gray-bg" v-else>
-            <div id="going_to_draw"></div>
+            <div id="going_to_draw">
+              {{ready_sec}}
+              <img src="@/assets/pencil.svg" alt="">
+              <h1>is going to draw</h1>
+            </div>
             <div id="scoreboard"></div>
           </div>
         </div>
@@ -66,9 +68,11 @@ export default {
   data: function() {
     return {
       isWaitingNextTurn: true,
-      turn_clock: 60,
+      turn_clock: 99,
       ready_sec: 3,
-      options: []
+      options: [],
+      enable_drawing: false,
+      show_options:false,
     };
   },
   components: {
@@ -87,7 +91,14 @@ export default {
       this.set_room_id(null);
       this.$router.push({ name: "home" });
     },
+    choose_word(data){
+      this.socket.emit("choose_word", data)
+      console.log("This is data: ")
+      console.log(data)
+      this.set_word((this.options[data.option_index]).toUpperCase())
+    },
     ...mapMutations({
+      set_word:"set_word",
       set_room_id: "set_room_id",
       set_playerlist: "set_playerlist",
       set_logged: "set_logged",
@@ -98,6 +109,7 @@ export default {
   },
   computed: {
     ...mapState({
+      word: "current_word",
       current_round: "current_round",
       socket: "socket",
       room_id: "room_id",
@@ -107,9 +119,13 @@ export default {
   },
   mounted() {
     console.log("THIS IS MY SOCKET ID: " + this.socket.id);
+    this.socket.on("disconnect",() => {
+      this.leave();
+    });
     this.socket.on("show_options", data => {
       console.log("estas son mis opciones: " + data);
       this.options = data;
+      this.show_options=true;
     });
     this.socket.on("update_round", data => {
       this.set_current_round(data.round);
@@ -130,6 +146,10 @@ export default {
       this.turn_clock = data.sec;
       console.log("Second: " + data.sec);
     });
+     this.socket.on("get_ready_sec", data => {
+      this.ready_sec = data.sec;
+      console.log("Second: " + data.sec);
+    });
   }
 };
 </script>
@@ -147,11 +167,15 @@ export default {
   color: #363636;
   font-weight: bold;
   text-transform: uppercase;
+  background-color: #ffdd57;
 }
 .word_option {
   flex: 1;
   text-align: center;
   padding: 0.5em;
+}
+.word_option:hover{
+  background-color: #e2c347;
 }
 .word_option:hover {
   cursor: pointer;
@@ -163,6 +187,10 @@ export default {
   background-color: #ffffff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23CCC' stroke-width='0' %3E%3Crect fill='%23F5F5F5' x='-60' y='-60' width='110' height='240'/%3E%3C/g%3E%3C/svg%3E");
   flex: 1;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  color:black;
 }
 #round {
   font-family: "Kalam", cursive;

@@ -7,6 +7,7 @@ const messages = {
   English: {
     desc: "Draw, guess and win!",
     nickname: "Nickname:",
+    not_empty: "Player nick cannot be empty!",
     play: "Play!",
     leave_room: "Leave Room",
     enter_guess: "Enter guess...",
@@ -27,6 +28,7 @@ const messages = {
   Español: {
     desc: "Dibuja, adivina y gana!",
     nickname: "Nombre:",
+    not_empty: "¡El nombre de usuario no puede estar vacío!",
     play: "Jugar!",
     leave_room: "Salir de la sala",
     enter_guess: "Introduce palabra...",
