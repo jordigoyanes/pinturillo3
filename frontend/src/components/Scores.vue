@@ -3,15 +3,19 @@
     <ul>
       <li v-for="(player, index) in orderedUsers" :key="index">
         <div class="score">
-          <div v-if="player.username == localPlayer">
-            <h2>
-              <strong>{{ player.username }}</strong>
-            </h2>
+          <div class="pencil">
+            <img v-if="player.username == painter" src="@/assets/pencil.svg" alt />
+            <img v-else src="@/assets/pencil_gray.svg" alt />
           </div>
-          <h2 v-else>
-            {{ player.username }}
-          </h2>
-          SCORE: {{ player.score }}
+          <div class="right">
+            <div v-if="player.username == localPlayer">
+              <h2>
+                <strong>{{ player.username }}</strong>
+              </h2>
+            </div>
+            <h2 v-else>{{ player.username }}</h2>
+            SCORE: {{ player.score }}
+          </div>
         </div>
       </li>
     </ul>
@@ -25,7 +29,8 @@ export default {
   computed: {
     ...mapState({
       players: "players",
-      localPlayer: "localPlayer"
+      localPlayer: "localPlayer",
+      painter: "painter"
     }),
     orderedUsers: function() {
       return _.orderBy(this.players, "score").reverse();
@@ -41,6 +46,14 @@ export default {
 .score {
   border-bottom: 0.1rem solid #dbdbdb;
   padding: 0.5em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  img {
+    width: 30px;
+    height: 30px;
+    margin-right: 1em;
+  }
 }
 
 #scores h2 {

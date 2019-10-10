@@ -115,7 +115,8 @@ io.on('connection', (socket) => {
         id: room.index,
         original_joiner_name: joiner,
         new_joiner_name: new_joiner_name,
-        players: room.players
+        players: room.players,
+        painter: room.players[room.painter_index].username
       })
       io.in(room.index)
         .emit('chat_evt', {
@@ -208,13 +209,14 @@ io.on('connection', (socket) => {
         // change score
         if (room.current_turn.countdown !== 0) {
           room.players[player_index].score += room.current_turn.countdown;
+          room.players[room.painter_index].score += 5;
           room.current_turn.guessed.push({
             username: socket.username,
             points_gained: room.current_turn
               .countdown
           })
           io.in(socket.room_index)
-            .emit('score_change', { players: room.players })
+            .emit('score_change', { players: room.players, guessed: room.current_turn.guessed })
           io.in(socket.room_index)
             .emit('chat_evt', { username: socket.username, evt_type: "guessed_word" });
         }

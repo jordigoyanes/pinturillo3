@@ -22,7 +22,8 @@ const messages = {
       going_to_draw: " is going to draw!",
       reported: "The painter has been reported.",
       player_left: " has left.",
-      player_joined: " has joined."
+      player_joined: " has joined.",
+      player_won: " has won!"
     }
   },
   Español: {
@@ -43,7 +44,8 @@ const messages = {
       going_to_draw: " va a dibujar.",
       reported: "El dibujante ha sido reportado.",
       player_left: " ha salido.",
-      player_joined: " ha entrado."
+      player_joined: " ha entrado.",
+      player_won: " ha ganado!"
     }
   }
 };

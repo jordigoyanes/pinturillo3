@@ -82,6 +82,9 @@ export default {
         case "reported":
           message = this.i18n.t("chat_evt.reported");
           break;
+        case "player_won":
+          message = data.username + this.i18n.t("chat_evt.player_won");
+          break;
         case "going_to_draw":
           message = data.username + this.i18n.t("chat_evt.going_to_draw");
           this.set_show_drawing(false);

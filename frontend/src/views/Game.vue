@@ -34,11 +34,12 @@
           <div id="drawing-area" v-if="show_drawing" class="has-background-warning">
             <Toolbox v-if="show_toolbox" />
             <DrawingArea />
-            <div v-if="ready_wait">
-              <h2>{{ready_sec}}</h2>
-            </div>
           </div>
           <div id="gray-bg" v-else>
+            <div id="ready_wait" v-if="ready_wait">
+              <h3 id="chosen_word" v-if="localPlayer == painter">{{word}}</h3>
+              <h2>{{ready_sec}}</h2>
+            </div>
             <div id="going_to_draw">
               <img src="@/assets/pencil.svg" alt />
               <h1>{{painter}} {{ $t("chat_evt.going_to_draw") }}</h1>
@@ -89,8 +90,8 @@ export default {
       this.$router.push({ name: "home" });
     },
     choose_word(data) {
+      this.set_show_options(false);
       this.socket.emit("choose_word", data);
-      this.set_show_drawing(true);
       console.log("This is data: ");
       console.log(data);
       this.set_word(this.options[data.option_index].toUpperCase());
@@ -123,9 +124,14 @@ export default {
     })
   },
   mounted() {
+    this.socket.on("start_drawing", () => {
+      this.set_show_drawing(true);
+      if (this.localPlayer == this.painter) {
+        this.set_show_toolbox(true);
+      }
+    });
     this.socket.on("reveal_word_length", data => {
       console.log(data);
-      this.set_show_drawing(true);
       if (this.localPlayer != this.painter) {
         let word = "";
         for (let i = 0; i < data.word_length; i++) {
@@ -136,7 +142,6 @@ export default {
       console.log("reveal word length: " + JSON.stringify(data));
     });
     this.socket.on("reveal_word", data => {
-      this.set_show_toolbox(true);
       this.set_word(data.word.toUpperCase());
       console.log("reveal full word: " + JSON.stringify(data));
     });
@@ -172,6 +177,7 @@ export default {
     });
     this.socket.on("get_ready_sec", data => {
       this.set_show_options(false);
+      this.ready_wait = true;
       this.ready_sec = data.sec;
       this.ready_wait = true;
       console.log("Second: " + data.sec);
@@ -181,6 +187,23 @@ export default {
 </script>
 
 <style lang="scss">
+#ready_wait {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  h2 {
+    font-size: 4em;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+  }
+  h3#chosen_word {
+    font-size: 2.1em;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+  }
+}
 #going_to_draw {
   h2 {
     text-align: center;
@@ -228,6 +251,7 @@ export default {
   justify-content: center;
   align-items: center;
   color: black;
+  flex-direction: column;
 }
 #round {
   font-family: "Kalam", cursive;

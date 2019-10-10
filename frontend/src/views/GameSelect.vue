@@ -5,26 +5,16 @@
         <h1 class="title is-size-1 has-text-centered">Pintanary</h1>
         <div v-if="!isLoading" class="columns">
           <div class="column">
-            <div
-              class="box has-background-success game-select"
-              @click="goPublic()"
-            >
-              <h1 class=" is-size-1 has-text-centered">
-                {{ $t("play_public") }}
-              </h1>
+            <div class="box has-background-success game-select" @click="goPublic()">
+              <h1 class="is-size-1 has-text-centered">{{ $t("play_public") }}</h1>
             </div>
             <div class="section">
               <h3 class="title is-4">{{ $t("public_desc") }}</h3>
             </div>
           </div>
           <div class="column">
-            <div
-              class="box has-background-warning game-select"
-              @click="goPrivate()"
-            >
-              <h1 class=" is-size-1 has-text-centered">
-                {{ $t("play_private") }}
-              </h1>
+            <div class="box has-background-warning game-select" @click="goPrivate()">
+              <h1 class="is-size-1 has-text-centered">{{ $t("play_private") }}</h1>
             </div>
             <div class="section">
               <h3 class="title is-4">{{ $t("private_desc") }}</h3>
@@ -74,6 +64,7 @@ export default {
       set_room_id: "set_room_id",
       set_playerlist: "set_playerlist",
       set_logged: "set_logged",
+      set_painter: "set_painter",
       set_localplayer: "set_localplayer"
     })
   },
@@ -87,7 +78,7 @@ export default {
     this.socket.on("user_join", room => {
       console.log("this is original: " + room.original_joiner_name);
       console.log("this is new joiner name: " + room.new_joiner_name);
-
+      this.set_painter(room.painter);
       this.set_localplayer(room.new_joiner_name);
       this.set_logged(true);
       this.set_room_id(room.id);
