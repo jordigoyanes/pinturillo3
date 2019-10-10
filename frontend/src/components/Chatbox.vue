@@ -8,8 +8,8 @@
         </div>
         <div v-else>
           <p>
-            <strong>{{ chatmsg.username }}</strong
-            >: {{ chatmsg.message }}
+            <strong>{{ chatmsg.username }}</strong>
+            : {{ chatmsg.message }}
           </p>
         </div>
       </li>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "Chatbox",
@@ -52,7 +52,14 @@ export default {
     scrollToEnd: function() {
       var messages = document.getElementById("messages");
       messages.scrollTop = messages.scrollHeight;
-    }
+    },
+    ...mapMutations({
+      set_painter: "set_painter",
+      set_show_drawing: "set_show_drawing",
+      set_show_toolbox: "set_show_toolbox",
+      set_show_options: "set_show_options",
+      set_word: "set_word"
+    })
   },
   mounted() {
     this.scrollToEnd();
@@ -61,25 +68,33 @@ export default {
     });
     this.socket.on("chat_evt", data => {
       console.log("este es evt_type: " + data.evt_type);
+      let message;
       switch (data.evt_type) {
         case "player_joined":
-          data.message = data.username + this.i18n.t("chat_evt.player_joined");
+          message = data.username + this.i18n.t("chat_evt.player_joined");
           break;
         case "player_left":
-          data.message = data.username + this.i18n.t("chat_evt.player_left");
+          message = data.username + this.i18n.t("chat_evt.player_left");
           break;
         case "guessed_word":
-          data.message = data.username + this.i18n.t("chat_evt.guessed_word");
+          message = data.username + this.i18n.t("chat_evt.guessed_word");
           break;
         case "reported":
-          data.message = this.i18n.t("chat_evt.reported");
+          message = this.i18n.t("chat_evt.reported");
           break;
         case "going_to_draw":
-          data.message = data.username + this.i18n.t("chat_evt.going_to_draw");
+          message = data.username + this.i18n.t("chat_evt.going_to_draw");
+          this.set_show_drawing(false);
+          this.set_show_toolbox(false);
+          this.set_show_options(false);
+          this.set_word("?");
+          this.set_painter(data.username);
           break;
       }
-      data.type = "evt";
-      this.chat_messages = [...this.chat_messages, data];
+      this.chat_messages = [
+        ...this.chat_messages,
+        { message: message, username: data.username, type: "evt" }
+      ];
     });
   },
   updated() {

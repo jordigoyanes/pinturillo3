@@ -1,0 +1,14 @@
+arreglar frontend:
+cambiar pantalla del medio al canvas para el dibujante
+enviar eventos del chat cuando
+pensar en como incrementar puntuación
+hacer gran if en start_turn que detenga el tiempo de manera global. 
+Hacer objeto en el gameState llamado stoptime que desencadenará la detención de todos los bucles de tiempo y empezará un nuevo turno.
+otro objeto para detener todo el juego
+solución:
+generar un ID más complejo en vez de usar el índice de la array.
+hacer rooms propiedades en vez de una array para poder usar nanoid como id en vez del index.
+--hecho
+
+problema:
+Aumentar puntuación del pintor cuando la gente adivina lo que dibuja

@@ -6,9 +6,9 @@ import i18n from "@/plugins/i18n";
 Vue.use(Vuex);
 
 const socketlink =
-  process.env.NODE_ENV === "production"
-    ? "https://pinturillo3.herokuapp.com"
-    : "localhost:3000";
+  process.env.NODE_ENV === "production" ?
+  "https://pinturillo3.herokuapp.com" :
+  "localhost:3000";
 
 export default new Vuex.Store({
   state: {
@@ -22,9 +22,26 @@ export default new Vuex.Store({
     current_word: "?",
     i18n: i18n,
     brush_color: "black",
-    brush_width: 4
+    brush_width: 4,
+    painter: null,
+    show_drawing: false,
+    show_toolbox: false,
+    show_options: false,
+
   },
   mutations: {
+    set_show_drawing(state, payload) {
+      state.show_drawing = payload;
+    },
+    set_show_toolbox(state, payload) {
+      state.show_toolbox = payload;
+    },
+    set_show_options(state, payload) {
+      state.show_options = payload;
+    },
+    set_painter(state, payload) {
+      state.painter = payload;
+    },
     set_word(state, payload) {
       state.current_word = payload;
     },
@@ -59,7 +76,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async create_room({ state }, payload) {
+    async create_room({
+      state
+    }, payload) {
       console.log(state + payload);
     }
   }

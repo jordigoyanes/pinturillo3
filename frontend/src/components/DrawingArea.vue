@@ -29,12 +29,16 @@ export default {
     ...mapState({
       socket: "socket",
       brush_color: "brush_color",
-      brush_width: "brush_width"
+      brush_width: "brush_width",
+      painter: "painter",
+      localPlayer: "localPlayer"
     })
   },
   methods: {
     onMouseDown(e) {
-      this.drawing = true;
+      if (this.localPlayer == this.painter) {
+        this.drawing = true;
+      }
       this.current.x = e.offsetX;
       this.current.y = e.offsetY;
     },

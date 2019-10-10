@@ -1,13 +1,9 @@
 <template>
   <div>
     <section id="top-bar" class="section has-background-dark">
-      <button @click="leave()" class="button is-dark ">
-        {{ $t("leave_room") }}
-      </button>
+      <button @click="leave()" class="button is-dark">{{ $t("leave_room") }}</button>
 
-      <h1 id="game-title" class="is-size-3 level-item has-text-centered">
-        Pintanary
-      </h1>
+      <h1 id="game-title" class="is-size-3 level-item has-text-centered">Pintanary</h1>
 
       <div class="tags has-addons">
         <span class="tag is-dark">Room ID</span>
@@ -24,29 +20,28 @@
             </div>
             <div id="word">
               <div v-for="(letter, index) in word" :key="index" class="letter_box">{{letter}}</div>
-              
             </div>
             <div id="round">{{ current_round }}/3</div>
           </div>
-            <div v-if="show_options" id="word-selector">
-              <div
-                v-for="(option, index) in options"
-                :key="index"
-                class="word_option"
-                @click="choose_word({option_index: index})"
-              >
-                {{ option }}
-              </div>
-            </div>
-          <div id="drawing-area" v-if="enable_drawing" class="has-background-warning">
-            <Toolbox />
+          <div v-if="show_options" id="word-selector">
+            <div
+              v-for="(option, index) in options"
+              :key="index"
+              class="word_option"
+              @click="choose_word({option_index: index})"
+            >{{ option }}</div>
+          </div>
+          <div id="drawing-area" v-if="show_drawing" class="has-background-warning">
+            <Toolbox v-if="show_toolbox" />
             <DrawingArea />
+            <div v-if="ready_wait">
+              <h2>{{ready_sec}}</h2>
+            </div>
           </div>
           <div id="gray-bg" v-else>
             <div id="going_to_draw">
-              {{ready_sec}}
-              <img src="@/assets/pencil.svg" alt="">
-              <h1>is going to draw</h1>
+              <img src="@/assets/pencil.svg" alt />
+              <h1>{{painter}} {{ $t("chat_evt.going_to_draw") }}</h1>
             </div>
             <div id="scoreboard"></div>
           </div>
@@ -61,6 +56,8 @@ import DrawingArea from "@/components/DrawingArea";
 import Chatbox from "@/components/Chatbox.vue";
 import Scores from "@/components/Scores";
 import Toolbox from "@/components/Toolbox";
+import Scoreboard from "@/components/Scoreboard";
+
 import { mapState, mapMutations } from "vuex";
 
 export default {
@@ -71,15 +68,15 @@ export default {
       turn_clock: 99,
       ready_sec: 3,
       options: [],
-      enable_drawing: false,
-      show_options:false,
+      ready_wait: false
     };
   },
   components: {
     DrawingArea,
     Chatbox,
     Scores,
-    Toolbox
+    Toolbox,
+    Scoreboard
   },
   methods: {
     leave() {
@@ -91,20 +88,24 @@ export default {
       this.set_room_id(null);
       this.$router.push({ name: "home" });
     },
-    choose_word(data){
-      this.socket.emit("choose_word", data)
-      console.log("This is data: ")
-      console.log(data)
-      this.set_word((this.options[data.option_index]).toUpperCase())
+    choose_word(data) {
+      this.socket.emit("choose_word", data);
+      this.set_show_drawing(true);
+      console.log("This is data: ");
+      console.log(data);
+      this.set_word(this.options[data.option_index].toUpperCase());
     },
     ...mapMutations({
-      set_word:"set_word",
+      set_word: "set_word",
       set_room_id: "set_room_id",
       set_playerlist: "set_playerlist",
       set_logged: "set_logged",
       set_score: "set_score",
       set_localplayer: "set_localplayer",
-      set_current_round: "set_current_round"
+      set_current_round: "set_current_round",
+      set_show_drawing: "set_show_drawing",
+      set_show_toolbox: "set_show_toolbox",
+      set_show_options: "set_show_options"
     })
   },
   computed: {
@@ -114,18 +115,40 @@ export default {
       socket: "socket",
       room_id: "room_id",
       localPlayer: "localPlayer",
-      players: "players"
+      players: "players",
+      painter: "painter",
+      show_drawing: "show_drawing",
+      show_toolbox: "show_toolbox",
+      show_options: "show_options"
     })
   },
   mounted() {
+    this.socket.on("reveal_word_length", data => {
+      console.log(data);
+      this.set_show_drawing(true);
+      if (this.localPlayer != this.painter) {
+        let word = "";
+        for (let i = 0; i < data.word_length; i++) {
+          word = word + " ";
+        }
+        this.set_word(word);
+      }
+      console.log("reveal word length: " + JSON.stringify(data));
+    });
+    this.socket.on("reveal_word", data => {
+      this.set_show_toolbox(true);
+      this.set_word(data.word.toUpperCase());
+      console.log("reveal full word: " + JSON.stringify(data));
+    });
     console.log("THIS IS MY SOCKET ID: " + this.socket.id);
-    this.socket.on("disconnect",() => {
+    this.socket.on("disconnect", () => {
+      console.log("disconnect was triggered on the client");
       this.leave();
     });
     this.socket.on("show_options", data => {
       console.log("estas son mis opciones: " + data);
       this.options = data;
-      this.show_options=true;
+      this.set_show_options(true);
     });
     this.socket.on("update_round", data => {
       this.set_current_round(data.round);
@@ -143,11 +166,14 @@ export default {
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
     this.socket.on("turn_countdown_sec", data => {
+      if (this.ready_wait) this.ready_wait = false;
       this.turn_clock = data.sec;
       console.log("Second: " + data.sec);
     });
-     this.socket.on("get_ready_sec", data => {
+    this.socket.on("get_ready_sec", data => {
+      this.set_show_options(false);
       this.ready_sec = data.sec;
+      this.ready_wait = true;
       console.log("Second: " + data.sec);
     });
   }
@@ -155,6 +181,17 @@ export default {
 </script>
 
 <style lang="scss">
+#going_to_draw {
+  h2 {
+    text-align: center;
+    font-size: 3em;
+    font-weight: bold;
+  }
+  h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+}
 #top-bar {
   display: flex;
   justify-content: space-around;
@@ -174,7 +211,7 @@ export default {
   text-align: center;
   padding: 0.5em;
 }
-.word_option:hover{
+.word_option:hover {
   background-color: #e2c347;
 }
 .word_option:hover {
@@ -187,10 +224,10 @@ export default {
   background-color: #ffffff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23CCC' stroke-width='0' %3E%3Crect fill='%23F5F5F5' x='-60' y='-60' width='110' height='240'/%3E%3C/g%3E%3C/svg%3E");
   flex: 1;
-  display:flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-  color:black;
+  color: black;
 }
 #round {
   font-family: "Kalam", cursive;
