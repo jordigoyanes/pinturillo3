@@ -49,6 +49,13 @@ export default {
         this.guess = "";
       }
     },
+    remove_points_gained(players) {
+      let p = players;
+      for (let i = 0; i < p.length; i++) {
+        p[i].points_gained = 0;
+      }
+      return p;
+    },
     scrollToEnd: function() {
       var messages = document.getElementById("messages");
       messages.scrollTop = messages.scrollHeight;
@@ -58,7 +65,10 @@ export default {
       set_show_drawing: "set_show_drawing",
       set_show_toolbox: "set_show_toolbox",
       set_show_options: "set_show_options",
-      set_word: "set_word"
+      set_show_scoreboard: "set_show_scoreboard",
+      set_word: "set_word",
+      set_playerlist: "set_playerlist",
+      remove_points_gained: "remove_points_gained"
     })
   },
   mounted() {
@@ -90,6 +100,9 @@ export default {
           this.set_show_drawing(false);
           this.set_show_toolbox(false);
           this.set_show_options(false);
+          this.set_show_scoreboard(false);
+          this.remove_points_gained();
+          //this.set_playerlist(this.remove_points_gained(this.players));
           this.set_word("?");
           this.set_painter(data.username);
           break;
@@ -108,7 +121,8 @@ export default {
       socket: "socket",
       localPlayer: "localPlayer",
       room_id: "room_id",
-      i18n: "i18n"
+      i18n: "i18n",
+      players: "players"
     })
   }
 };

@@ -31,20 +31,37 @@
               @click="choose_word({option_index: index})"
             >{{ option }}</div>
           </div>
+
           <div id="drawing-area" v-if="show_drawing" class="has-background-warning">
             <Toolbox v-if="show_toolbox" />
             <DrawingArea />
           </div>
           <div id="gray-bg" v-else>
-            <div id="ready_wait" v-if="ready_wait">
-              <h3 id="chosen_word" v-if="localPlayer == painter">{{word}}</h3>
-              <h2>{{ready_sec}}</h2>
+            <div v-if="show_scoreboard" id="scoreboard">
+              <div v-if="is_final_scoreboard" id="winner_name">
+                <h1>{{players[0].username}} {{ $t("chat_evt.player_won") }}</h1>
+              </div>
+              <div v-for="(player, index) in players" :key="index" class="player">
+                <div class="current_score">
+                  <div class="classification">{{index + 1}}</div>
+                  <div class="name">{{player.username}}</div>
+                  <div class="scoreboard_score">{{player.score}}</div>
+                </div>
+                <div v-if="player.points_gained && player.points_gained !=0" class="points_gained">
+                  <p>{{player.points_gained}}</p>
+                </div>
+              </div>
             </div>
-            <div id="going_to_draw">
-              <img src="@/assets/pencil.svg" alt />
-              <h1>{{painter}} {{ $t("chat_evt.going_to_draw") }}</h1>
+            <div v-else>
+              <div id="ready_wait" v-if="ready_wait">
+                <h3 id="chosen_word" v-if="localPlayer == painter">{{word}}</h3>
+                <h2>{{ready_sec}}</h2>
+              </div>
+              <div id="going_to_draw">
+                <img src="@/assets/pencil.svg" alt />
+                <h1>{{painter}} {{ $t("chat_evt.going_to_draw") }}</h1>
+              </div>
             </div>
-            <div id="scoreboard"></div>
           </div>
         </div>
         <Chatbox />
@@ -69,7 +86,8 @@ export default {
       turn_clock: 99,
       ready_sec: 3,
       options: [],
-      ready_wait: false
+      ready_wait: false,
+      is_final_scoreboard: false
     };
   },
   components: {
@@ -106,7 +124,8 @@ export default {
       set_current_round: "set_current_round",
       set_show_drawing: "set_show_drawing",
       set_show_toolbox: "set_show_toolbox",
-      set_show_options: "set_show_options"
+      set_show_options: "set_show_options",
+      set_show_scoreboard: "set_show_scoreboard"
     })
   },
   computed: {
@@ -120,10 +139,17 @@ export default {
       painter: "painter",
       show_drawing: "show_drawing",
       show_toolbox: "show_toolbox",
-      show_options: "show_options"
+      show_options: "show_options",
+      show_scoreboard: "show_scoreboard"
     })
   },
   mounted() {
+    this.socket.on("show_scoreboard", data => {
+      this.set_show_drawing(false);
+      this.set_show_options(false);
+      this.set_show_scoreboard(true);
+      this.is_final_scoreboard = data.is_final;
+    });
     this.socket.on("start_drawing", () => {
       this.set_show_drawing(true);
       if (this.localPlayer == this.painter) {
@@ -172,11 +198,15 @@ export default {
     });
     this.socket.on("turn_countdown_sec", data => {
       if (this.ready_wait) this.ready_wait = false;
+      if (!this.show_drawing) this.set_show_drawing(true);
+      if (this.localPlayer != this.painter) {
+        if (this.set_show_toolbox) this.set_show_toolbox(false);
+      }
       this.turn_clock = data.sec;
       console.log("Second: " + data.sec);
     });
     this.socket.on("get_ready_sec", data => {
-      this.set_show_options(false);
+      if (this.show_options) this.set_show_options(false);
       this.ready_wait = true;
       this.ready_sec = data.sec;
       this.ready_wait = true;
@@ -187,6 +217,58 @@ export default {
 </script>
 
 <style lang="scss">
+#winner_name {
+  padding: 2em 0 1em 0;
+  font-size: 2.5em;
+  width: 100%;
+  text-align: center;
+}
+#scoreboard {
+  color: gray;
+  display: flex;
+  flex-direction: column;
+  z-index: 500;
+  align-items: center;
+  width: 100%;
+  .player {
+    height: 3em;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.5em;
+    justify-content: space-between;
+    .current_score {
+      min-width: 20em;
+      padding: 0.5em 1em;
+      align-items: center;
+      border-radius: 15px;
+      background-color: #363636;
+      color: whitesmoke;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .classification,
+      .name,
+      .scoreboard_score {
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+    }
+    .points_gained {
+      margin-left: 1em;
+      padding: 1rem;
+      font-size: 1em;
+      font-weight: bold;
+      background-image: url("../assets/star.svg");
+      background-repeat: no-repeat;
+      color: black;
+      display: flex;
+      align-items: center;
+      text-align: center;
+    }
+  }
+}
+
 #ready_wait {
   display: flex;
   align-items: center;
@@ -248,10 +330,11 @@ export default {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg stroke='%23CCC' stroke-width='0' %3E%3Crect fill='%23F5F5F5' x='-60' y='-60' width='110' height='240'/%3E%3C/g%3E%3C/svg%3E");
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   color: black;
   flex-direction: column;
+  padding-top: 2em;
 }
 #round {
   font-family: "Kalam", cursive;

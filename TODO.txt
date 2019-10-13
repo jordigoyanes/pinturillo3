@@ -11,4 +11,10 @@ hacer rooms propiedades en vez de una array para poder usar nanoid como id en ve
 --hecho
 
 problema:
-Aumentar puntuación del pintor cuando la gente adivina lo que dibuja
+send word_with_clues to the new player than joins the while in the middle of a turn, so they can guess it too, with clues included.
+add a reveal frequency
+x- make scoreboard dynamic
+x- show points gained on the scoreboard using svg star background.
+make cancel turn button work
+add report painter
+private rooms

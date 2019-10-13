@@ -3,7 +3,7 @@
     <div class="hero-body">
       <div class="container is-mobile">
         <h1 class="title is-size-1 has-text-centered">Pintanary</h1>
-        <div v-if="!isLoading" class="columns">
+        <div v-if="!isLoading && socket.connected" class="columns">
           <div class="column">
             <div class="box has-background-success game-select" @click="goPublic()">
               <h1 class="is-size-1 has-text-centered">{{ $t("play_public") }}</h1>
@@ -65,7 +65,10 @@ export default {
       set_playerlist: "set_playerlist",
       set_logged: "set_logged",
       set_painter: "set_painter",
-      set_localplayer: "set_localplayer"
+      set_localplayer: "set_localplayer",
+      set_word: "set_word",
+      set_show_drawing: "set_show_drawing",
+      set_show_toolbox: "set_show_toolbox"
     })
   },
   mounted() {
@@ -83,7 +86,13 @@ export default {
       this.set_logged(true);
       this.set_room_id(room.id);
       this.set_playerlist(room.players);
-
+      if (this.localPlayer == room.new_joiner_name) {
+        let word = "";
+        for (let i = 0; i < room.word; i++) {
+          word = word + " ";
+        }
+        this.set_word(word);
+      }
       this.$router.push({ path: "/room/" + this.room_id });
     });
   },
@@ -91,7 +100,8 @@ export default {
     ...mapState({
       socket: "socket",
       localPlayer: "localPlayer",
-      room_id: "room_id"
+      room_id: "room_id",
+      painter: "painter"
     })
   }
 };

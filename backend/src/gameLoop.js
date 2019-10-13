@@ -25,6 +25,7 @@ async function start_turn(io, gameState, room_index) {
   try {
     let rooms = gameState.rooms;
     let current_room = rooms.find((r) => { return r.index == room_index });
+
     // recursive function that will will give a turn for every player online for 3 rounds.
     if (current_room) {
       let current_turn = {
@@ -37,6 +38,11 @@ async function start_turn(io, gameState, room_index) {
         ]
       };
       current_room.current_turn = current_turn;
+
+      //set points_gained to 0 to all players, because new turn started
+      for (let i = 0; i < current_room.players.length; i++) {
+        current_room.players[i].points_gained = 0;
+      }
 
       let painter_username =
         current_room.players[current_room.painter_index].username;
@@ -131,7 +137,7 @@ async function countdown_60_sec(io, room_index, gameState) {
   let current_room = rooms.find((r) => { return r.index == room_index });
   if (current_room) {
     let current_turn = current_room.current_turn;
-    current_turn.countdown = 1;
+    current_turn.countdown = 99;
     let stop_time = false;
 
     console.log(current_turn.countdown);
@@ -167,14 +173,17 @@ async function countdown_60_sec(io, room_index, gameState) {
         if (current_turn.painter_left) {
           io.in(room_index)
             .emit('painter_left');
+          start_turn(io, gameState, room_index);
         }
         if (current_turn.is_canceled) {
           io.in(room_index)
             .emit('painter_canceled');
+          start_turn(io, gameState, room_index);
         }
         if (is_painter_reported) {
           io.in(room_index)
             .emit('painter_reported');
+          start_turn(io, gameState, room_index);
         }
         let isEndOfRound =
           current_room.painter_index + 1 == current_room.players.length;
@@ -186,16 +195,42 @@ async function countdown_60_sec(io, room_index, gameState) {
             .emit('update_round', {
               round: current_room.current_round
             });
+          io.in(room_index)
+            .emit("reveal_word", {
+              word: current_room.current_turn.word
+            })
+          io.in(room_index)
+            .emit("show_scoreboard", {
+              is_final: false
+            })
+          console.log("Wait 8 seconds before starting next turn")
+          await sleep(8000);
           start_turn(io, gameState, room_index);
         } else if (current_room.current_round <= 3 && !isEndOfRound) {
           current_room.painter_index++;
+          io.in(room_index)
+            .emit("reveal_word", {
+              word: current_room.current_turn.word
+            })
+          io.in(room_index)
+            .emit("show_scoreboard", {
+              is_final: false
+            })
+          console.log("Wait 8 seconds before starting next turn")
+          await sleep(8000);
           start_turn(io, gameState, room_index);
+
         } else if (current_room.current_round == 3 && isEndOfRound) {
           // if it is the end of the last round, the recursive loop will stop here
           // to show the final scoreboard and then run the game loop again.
           console.log('GAME IS OVER!!!!');
           console.log('here show the scoreboards');
           let winner = current_room.players.sort(function(a, b) { return a.score - b.score })[0];
+          io.in(room_index)
+            .emit("show_scoreboard", {
+              winner: winner.username,
+              is_final: true
+            })
           io.in(room_index)
             .emit("chat_evt", {
               evt_type: "player_won",

@@ -1,7 +1,7 @@
 <template>
   <div id="scores" class="whitebox span-col-2 span-row-85">
     <ul>
-      <li v-for="(player, index) in orderedUsers" :key="index">
+      <li v-for="(player, index) in players" :key="index">
         <div class="score">
           <div class="pencil">
             <img v-if="player.username == painter" src="@/assets/pencil.svg" alt />
@@ -16,13 +16,15 @@
             <h2 v-else>{{ player.username }}</h2>
             SCORE: {{ player.score }}
           </div>
+          <div v-if="player.points_gained && player.points_gained !=0" class="new_points">
+            <p>{{player.points_gained}}</p>
+          </div>
         </div>
       </li>
     </ul>
   </div>
 </template>
 <script>
-import _ from "lodash";
 import { mapState } from "vuex";
 export default {
   name: "scores",
@@ -31,15 +33,23 @@ export default {
       players: "players",
       localPlayer: "localPlayer",
       painter: "painter"
-    }),
-    orderedUsers: function() {
-      return _.orderBy(this.players, "score").reverse();
-    }
+    })
   }
 };
 </script>
 
 <style lang="scss">
+.new_points {
+  background-image: url("../assets/star.svg");
+  background-repeat: no-repeat;
+  padding: 1rem;
+  font-weight: bold;
+  margin-left: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3em;
+}
 #scores {
   padding: 1em;
 }
@@ -49,6 +59,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+
   img {
     width: 30px;
     height: 30px;

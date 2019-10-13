@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import io from "socket.io-client";
 import i18n from "@/plugins/i18n";
+import _ from "lodash";
 
 Vue.use(Vuex);
 
@@ -27,9 +28,22 @@ export default new Vuex.Store({
     show_drawing: false,
     show_toolbox: false,
     show_options: false,
-
+    show_scoreboard: false,
+    guessed: null,
   },
   mutations: {
+    remove_points_gained(state) {
+      for (let i = 0; i < state.players.length; i++) {
+        state.players[i].points_gained = 0;
+      }
+      console.log("this is state.players after removing points gained: " + JSON.stringify(state.players));
+    },
+    set_guessed(state, payload) {
+      state.guessed = payload;
+    },
+    set_show_scoreboard(state, payload) {
+      state.show_scoreboard = payload;
+    },
     set_show_drawing(state, payload) {
       state.show_drawing = payload;
     },
@@ -69,7 +83,7 @@ export default new Vuex.Store({
       state.room_id = payload;
     },
     set_playerlist(state, payload) {
-      state.players = payload;
+      state.players = _.orderBy(payload, "score").reverse();
     },
     set_logged(state, payload) {
       state.isLoggedIn = payload;
