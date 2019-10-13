@@ -5,11 +5,10 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cd frontend && npm run build && cd ..",
-    "start": "nodemon src/index",
+    "build": "cd frontend && npm install && npm run build && cd ..",
     "server": "babel-node src/index",
     "dev": "npm-run-all server",
-    "watch": "nodemon"
+    "start": "nodemon"
   },
   "repository": {
     "type": "git",
