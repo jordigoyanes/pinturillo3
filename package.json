@@ -35,6 +35,9 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
     "lint-staged": "^8.1.0",
-    "@vue/cli-service": "^3.4.0"
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
+    "@vue/eslint-config-prettier": "^4.0.1"
   }
 }
