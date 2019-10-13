@@ -17,7 +17,7 @@
   },
   "author": "Jordi Goyanes",
   "dependencies": {
-    "babel-node": "0.0.1-security",
+    "babel-cli": "^6.26.0",
     "bulma": "^0.7.4",
     "core-js": "^3.3.1",
     "express": "^4.16.2",
