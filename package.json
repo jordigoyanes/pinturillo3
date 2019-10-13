@@ -16,6 +16,7 @@
   },
   "author": "Jordi Goyanes",
   "dependencies": {
+    "core-js": "^3.3.1",
     "express": "^4.16.2",
     "lodash": "^4.17.11",
     "nanoid": "^2.1.2",
