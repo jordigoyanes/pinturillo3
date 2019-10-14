@@ -12,7 +12,7 @@ app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
 
 // Always redirect to Vue SPA:
 app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, './frontend/dist/index.html'));
+  response.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
 });
 
 //Listen on port 3000
