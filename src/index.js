@@ -7,6 +7,7 @@ var start_game = require('./gameLoop.js');
 
 //middlewares
 app.use(express.static(path.resolve(__dirname, './frontend/dist')));
+
 // app.use(express.static('public'))
 
 // Always redirect to Vue SPA:
