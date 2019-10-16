@@ -174,7 +174,6 @@ export default {
     console.log("THIS IS MY SOCKET ID: " + this.socket.id);
     this.socket.on("disconnect", () => {
       console.log("disconnect was triggered on the client");
-      this.leave();
     });
     this.socket.on("show_options", data => {
       console.log("estas son mis opciones: " + data);
