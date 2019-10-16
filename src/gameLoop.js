@@ -3,9 +3,7 @@ async function start_game(io, gameState, room_index) {
   let rooms = gameState.rooms;
 
   let current_room = rooms.find((r) => { return r.index == room_index });
-  //let current_room = rooms[room_index];
-  current_room.current_round = 1;
-  current_room.painter_index = 0;
+
   io.in(room_index)
     .emit('update_round', { round: current_room.current_round });
   /*
@@ -141,13 +139,8 @@ async function countdown_60_sec(io, room_index, gameState) {
     let stop_time = false;
 
     console.log(current_turn.countdown);
-    io.in(current_room.index)
-      .emit('turn_countdown_sec', {
-        sec: current_turn.countdown
-      });
-    while (!stop_time) {
 
-      //console.log(sec)
+    while (!stop_time) {
       /* 
       error message if painter:
                 cancels turn
@@ -159,7 +152,6 @@ async function countdown_60_sec(io, room_index, gameState) {
       let is_painter_reported =
         current_turn.num_reports == num_other_players &&
         current_turn.num_reports != 0;
-      //console.log('THIS IS ROOM OBJECT: ' + JSON.stringify(current_room));
       if (
         is_painter_reported ||
         current_turn.is_canceled ||
@@ -173,17 +165,14 @@ async function countdown_60_sec(io, room_index, gameState) {
         if (current_turn.painter_left) {
           io.in(room_index)
             .emit('painter_left');
-          start_turn(io, gameState, room_index);
         }
         if (current_turn.is_canceled) {
           io.in(room_index)
             .emit('painter_canceled');
-          start_turn(io, gameState, room_index);
         }
         if (is_painter_reported) {
           io.in(room_index)
             .emit('painter_reported');
-          start_turn(io, gameState, room_index);
         }
         let isEndOfRound =
           current_room.painter_index + 1 == current_room.players.length;
@@ -237,6 +226,8 @@ async function countdown_60_sec(io, room_index, gameState) {
               username: winner.username
             })
           console.log('new game started');
+          console.log("Wait 8 seconds before starting next game")
+          await sleep(8000);
           start_game(io, gameState, room_index);
         }
       } else {
@@ -245,9 +236,8 @@ async function countdown_60_sec(io, room_index, gameState) {
             sec: current_turn.countdown
           });
         current_turn.countdown--;
+        await sleep(1000);
       }
-
-      await sleep(1000);
     }
   }
 }

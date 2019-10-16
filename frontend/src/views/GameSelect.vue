@@ -49,6 +49,9 @@ export default {
   methods: {
     goPublic() {
       this.isLoading = true;
+      if (!this.socket.connected) {
+        this.socket.connect();
+      }
       this.socket.emit("join_public_room", {
         player: this.localPlayer,
         locale: this.i18n.locale

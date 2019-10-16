@@ -200,7 +200,7 @@ export default {
       if (this.ready_wait) this.ready_wait = false;
       if (!this.show_drawing) this.set_show_drawing(true);
       if (this.localPlayer != this.painter) {
-        if (this.set_show_toolbox) this.set_show_toolbox(false);
+        if (this.show_toolbox) this.set_show_toolbox(false);
       }
       this.turn_clock = data.sec;
       console.log("Second: " + data.sec);

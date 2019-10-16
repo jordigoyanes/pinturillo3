@@ -135,6 +135,8 @@ io.on('connection', (socket) => {
         index: randomid,
         type: 'public',
         language: data.locale,
+        current_round: 1,
+        painter_index: 0,
         players: [
           {
             username: joiner,
