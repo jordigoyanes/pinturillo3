@@ -3,7 +3,8 @@ async function start_game(io, gameState, room_index) {
   let rooms = gameState.rooms;
 
   let current_room = rooms.find((r) => { return r.index == room_index });
-
+  current_room.current_round = 1;
+  current_room.painter_index = 0;
   io.in(room_index)
     .emit('update_round', { round: current_room.current_round });
   /*
@@ -14,6 +15,7 @@ async function start_game(io, gameState, room_index) {
   */
   //if room still exists (meaning there's players inside)
   if (current_room) {
+
     start_turn(io, gameState, room_index);
     //show final scoreboard of game
   }
@@ -135,7 +137,7 @@ async function countdown_60_sec(io, room_index, gameState) {
   let current_room = rooms.find((r) => { return r.index == room_index });
   if (current_room) {
     let current_turn = current_room.current_turn;
-    current_turn.countdown = 99;
+    current_turn.countdown = 10;
     let stop_time = false;
 
     console.log(current_turn.countdown);
@@ -228,6 +230,14 @@ async function countdown_60_sec(io, room_index, gameState) {
           console.log('new game started');
           console.log("Wait 8 seconds before starting next game")
           await sleep(8000);
+          for (let i = 0; i < current_room.players.length; i++) {
+            current_room.players[i].score = 0;
+          }
+          io.in(room_index)
+            .emit('score_change', {
+              players: current_room.players,
+            });
+
           start_game(io, gameState, room_index);
         }
       } else {
