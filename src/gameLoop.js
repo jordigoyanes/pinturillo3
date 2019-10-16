@@ -137,7 +137,7 @@ async function countdown_60_sec(io, room_index, gameState) {
   let current_room = rooms.find((r) => { return r.index == room_index });
   if (current_room) {
     let current_turn = current_room.current_turn;
-    current_turn.countdown = 10;
+    current_turn.countdown = 99;
     let stop_time = false;
 
     console.log(current_turn.countdown);
