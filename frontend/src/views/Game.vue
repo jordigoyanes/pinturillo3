@@ -1,9 +1,9 @@
 <template>
   <div>
     <section id="top-bar" class="section has-background-dark">
-      <button class="leave button is-dark">
-        <a :href="leave_link">{{ $t("leave_room") }}</a>
-      </button>
+      <a :href="leave_link">
+        <button class="leave button is-dark">{{ $t("leave_room") }}</button>
+      </a>
 
       <h1 id="game-title" class="is-size-3 level-item has-text-centered">Pintanary</h1>
 

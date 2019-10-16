@@ -1,12 +1,8 @@
 var genWords = require('./genWords.js');
 async function start_game(io, gameState, room_index) {
   let rooms = gameState.rooms;
-
   let current_room = rooms.find((r) => { return r.index == room_index });
-  current_room.current_round = 1;
-  current_room.painter_index = 0;
-  io.in(room_index)
-    .emit('update_round', { round: current_room.current_round });
+
   /*
     5 segundos para esperar a que acabe el turno
     7 segundos para elegir una de las 3 palabras a dibujar. 
@@ -15,7 +11,10 @@ async function start_game(io, gameState, room_index) {
   */
   //if room still exists (meaning there's players inside)
   if (current_room) {
-
+    current_room.current_round = 1;
+    current_room.painter_index = 0;
+    io.in(room_index)
+      .emit('update_round', { round: current_room.current_round });
     start_turn(io, gameState, room_index);
     //show final scoreboard of game
   }
