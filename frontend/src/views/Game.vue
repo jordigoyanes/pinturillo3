@@ -1,7 +1,9 @@
 <template>
   <div>
     <section id="top-bar" class="section has-background-dark">
-      <button @click="leave()" class="button is-dark">{{ $t("leave_room") }}</button>
+      <button class="leave button is-dark">
+        <a :href="leave_link">{{ $t("leave_room") }}</a>
+      </button>
 
       <h1 id="game-title" class="is-size-3 level-item has-text-centered">Pintanary</h1>
 
@@ -98,15 +100,6 @@ export default {
     Scoreboard
   },
   methods: {
-    leave() {
-      this.socket.removeAllListeners();
-      this.socket.disconnect();
-      this.set_logged(false);
-      this.set_playerlist(null);
-      this.set_localplayer(null);
-      this.set_room_id(null);
-      this.$router.push({ name: "home" });
-    },
     choose_word(data) {
       this.set_show_options(false);
       this.socket.emit("choose_word", data);
@@ -141,7 +134,14 @@ export default {
       show_toolbox: "show_toolbox",
       show_options: "show_options",
       show_scoreboard: "show_scoreboard"
-    })
+    }),
+    leave_link: () => {
+      let leave_link =
+        process.env.NODE_ENV === "production"
+          ? "https://pinturillo3.herokuapp.com"
+          : "http://localhost:8080";
+      return leave_link;
+    }
   },
   mounted() {
     this.socket.on("show_scoreboard", data => {
@@ -217,6 +217,9 @@ export default {
 </script>
 
 <style lang="scss">
+.leave a {
+  color: whitesmoke;
+}
 #winner_name {
   padding: 2em 0 1em 0;
   font-size: 2.5em;
