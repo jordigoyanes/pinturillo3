@@ -32,6 +32,7 @@ async function start_turn(io, gameState, room_index) {
         painter_left: false,
         is_canceled: false,
         num_reports: 0,
+        revealed: [],
         guessed: [
           /* EXAMPLE => username: jordi, points_gained:234 */
         ]
@@ -121,7 +122,7 @@ async function start_turn(io, gameState, room_index) {
       if (get_ready_sec === 0) {
         io.in(room_index)
           .emit('start_drawing');
-        countdown_60_sec(io, room_index, gameState);
+        countdown_sec(io, room_index, gameState);
       }
     }
   } catch (e) {
@@ -131,17 +132,22 @@ async function start_turn(io, gameState, room_index) {
   }
 }
 
-async function countdown_60_sec(io, room_index, gameState) {
+async function countdown_sec(io, room_index, gameState) {
+  const COUNTDOWN_TIME = 99;
   let rooms = gameState.rooms;
   let current_room = rooms.find((r) => { return r.index == room_index });
   if (current_room) {
+    let word = current_room.current_turn.word;
     let current_turn = current_room.current_turn;
-    current_turn.countdown = 99;
+    current_turn.countdown = COUNTDOWN_TIME;
     let stop_time = false;
 
-    console.log(current_turn.countdown);
+    let num_reveals = Math.ceil((word.length * 0.5));
+    let freq = Math.floor(COUNTDOWN_TIME / num_reveals);
+    let next_reveal_sec = COUNTDOWN_TIME - freq;
 
     while (!stop_time) {
+
       /* 
       error message if painter:
                 cancels turn
@@ -240,6 +246,22 @@ async function countdown_60_sec(io, room_index, gameState) {
           start_game(io, gameState, room_index);
         }
       } else {
+        if (current_turn.countdown === next_reveal_sec) {
+          console.log("Time to reveal letter")
+          let result, pos_to_reveal;
+          do {
+            pos_to_reveal = Math.floor(Math.random() * Math.floor(word.length))
+            result = current_turn.revealed.find(letter_pos => letter_pos == pos_to_reveal);
+          } while (result)
+          current_turn.revealed.push(pos_to_reveal)
+          // show hints every freq seconds
+          io.in(current_room.index)
+            .emit('reveal_letter', {
+              letter: word[pos_to_reveal].toUpperCase(),
+              pos: pos_to_reveal
+            });
+          next_reveal_sec -= freq;
+        }
         io.in(current_room.index)
           .emit('turn_countdown_sec', {
             sec: current_turn.countdown

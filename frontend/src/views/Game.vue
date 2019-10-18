@@ -144,6 +144,19 @@ export default {
     }
   },
   mounted() {
+    this.socket.on("reveal_letter", data => {
+      if (this.localPlayer != this.painter) {
+        let new_word = "";
+        for (let i = 0; i < this.word.length; i++) {
+          if (i == data.pos) {
+            new_word += data.letter;
+          } else {
+            new_word += this.word[i];
+          }
+        }
+        this.set_word(new_word);
+      }
+    });
     this.socket.on("show_scoreboard", data => {
       this.set_show_drawing(false);
       this.set_show_options(false);
@@ -161,7 +174,7 @@ export default {
       if (this.localPlayer != this.painter) {
         let word = "";
         for (let i = 0; i < data.word_length; i++) {
-          word = word + " ";
+          word += " ";
         }
         this.set_word(word);
       }

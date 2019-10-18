@@ -83,7 +83,8 @@ export default new Vuex.Store({
       state.room_id = payload;
     },
     set_playerlist(state, payload) {
-      state.players = _.orderBy(payload, "score").reverse();
+      state.players = _.orderBy(payload, "score")
+        .reverse();
     },
     set_logged(state, payload) {
       state.isLoggedIn = payload;
