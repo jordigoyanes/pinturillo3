@@ -38,7 +38,7 @@ async function start_turn(io, gameState, room_index) {
         ]
       };
       current_room.current_turn = current_turn;
-
+      console.log("this is ROOM FROM Start turn: " + JSON.stringify(current_room))
       //set points_gained to 0 to all players, because new turn started
       for (let i = 0; i < current_room.players.length; i++) {
         current_room.players[i].points_gained = 0;

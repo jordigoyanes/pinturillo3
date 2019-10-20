@@ -134,9 +134,10 @@ input#guess {
 #chatbox {
   padding: 1em;
   display: flex;
-  flex: 1;
+
   flex-direction: column;
-  //flex-wrap: wrap;
+
+  width: 350px;
 }
 #messages {
   overflow: auto;

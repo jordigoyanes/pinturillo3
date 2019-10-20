@@ -1,7 +1,7 @@
 <template>
   <div id="toolbox" class="has-background-warning">
     <div id="clean-canvas" @click="socket.emit('clear_canvas')">
-      <img src="../assets/clean-canvas.svg" alt="" />
+      <img src="../assets/clean-canvas.svg" alt />
     </div>
     <div id="palette">
       <div class="color white" @click="set_brush_color('white')" />
@@ -148,6 +148,9 @@ export default {
 #toolbox {
   display: flex;
   padding: 5px;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 #clean-canvas {
   background-color: white;

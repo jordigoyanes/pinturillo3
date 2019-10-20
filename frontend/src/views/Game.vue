@@ -13,7 +13,7 @@
       </div>
     </section>
     <div class="hero is-mobile is-dark is-fullheight">
-      <div id="game-columns" class="grid">
+      <div id="game-columns">
         <Scores />
         <div id="drawing-column" class="span-col-5 span-row-85">
           <div id="word-top" class="whitebox has-background-danger">
@@ -200,10 +200,6 @@ export default {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
-    this.socket.on("wait_next_turn", newData => {
-      this.set_playerlist(newData.players);
-      console.log("this is the new data: " + JSON.stringify(newData.players));
-    });
     this.socket.on("score_change", newData => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
@@ -339,6 +335,7 @@ export default {
 }
 #drawing-area {
   flex: 1;
+  position: relative;
 }
 #gray-bg {
   background-color: #ffffff;
@@ -412,32 +409,18 @@ h1#game-title:nth-child(0) {
 
 #game-columns {
   margin: 1em auto;
-  min-width: 80%;
+  min-width: 100%;
   padding: 0 2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  height: 700px;
 }
 #drawing-column {
   border-radius: 0px 0px 6px 6px;
   display: flex;
   flex-direction: column;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-gap: 10px;
-}
-.span-col-2 {
-  grid-column: span 2 / auto;
-}
-.span-col-5 {
-  grid-column: span 5 / auto;
-}
-.span-col-3 {
-  grid-column: span 3 / auto;
-}
-.span-row-85 {
-  grid-row: span 75 / auto;
-  min-height: 80vh;
-  max-height: 80vh;
-  overflow: hidden;
+  width: 800px;
+  height: 700px;
 }
 </style>

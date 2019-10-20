@@ -52,6 +52,7 @@ export default {
 }
 #scores {
   padding: 1em;
+  width: 250px;
 }
 .score {
   border-bottom: 0.1rem solid #dbdbdb;

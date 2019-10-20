@@ -17,6 +17,7 @@ const messages = {
     private_desc: "Play with friends in a private room",
     join_room: "Join Room",
     create_room: "Create Room",
+    join_or_create_room: "Join or create private room",
     chat_evt: {
       guessed_word: " has guessed the word!",
       going_to_draw: " is going to draw!",
@@ -39,6 +40,7 @@ const messages = {
     private_desc: "Juega con tus amigos en una sala privada",
     join_room: "Unirse a sala",
     create_room: "Crear sala",
+    join_or_create_room: "Crea o únete a una sala privada",
     chat_evt: {
       guessed_word: " ha acertado la palabra!",
       going_to_draw: " va a dibujar.",

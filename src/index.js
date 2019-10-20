@@ -21,7 +21,6 @@ console.log('Listening on port ' + (process.env.PORT || 3000));
 
 // pinturillo constants
 const MAX_PLAYERS = 5;
-const TIME_LIMIT = 99;
 
 let gameState = {
   rooms: []
@@ -35,42 +34,8 @@ io.on('connection', (socket) => {
   // USER
   console.log('New player connected');
 
-  socket.on('create_room', (data) => {
-    // Create private room in db:
-    // data structure:
-    let newRoom = {
-      room_number: 2334,
-      room_password: data.password,
-      players: [
-        {
-          username: data.creator_player,
-          score: 0,
-          points_gained: 0
-        }
-      ],
-      currentWord: 'hola',
-      currentPainter: 'username',
-      nextPainter: 'username'
-    };
-    db.insert(newRoom, function(err, newDoc) {
-      // Callback is optional
-      if (err) {
-        console.log(err);
-      }
-      console.log(newDoc);
-    });
-    // Make room creator join room
-    socket.broadcast.emit('join_private_room', {
-      message: data.message,
-      username: data.username
-    });
-  });
-
-  socket.on('join_private_room', (data) => {
+  socket.on('join_private_room', async (data) => {
     //todo: join private room with matching password
-  });
-
-  socket.on('join_public_room', async (data) => {
     let rooms = gameState.rooms;
     //join public room with public type, only takes username
     // check if public, has less than MAX_PLAYERS and same language
@@ -79,12 +44,16 @@ io.on('connection', (socket) => {
     let found_room = rooms.find(function(room) {
       return (
         room &&
-        room.type == 'public' &&
+        room.index == data.room_id &&
+        room.type == 'private' &&
+        room.password == data.password &&
         room.language == data.locale &&
         room.players.length < MAX_PLAYERS
       );
     });
-    if (found_room != undefined) {
+    if (!found_room) {
+      socket.emit("error_private_room", { type: "not_found" });
+    } else {
       let room = found_room;
       let new_joiner_name = joiner;
       // if player has same name as other player in room, concatenate room_index to name
@@ -126,15 +95,32 @@ io.on('connection', (socket) => {
           evt_type: 'player_joined',
           username: new_joiner_name
         });
-      socket.is_waiting_next_round = true;
+    }
+  });
+  socket.on('create_private_room', async (data) => {
+    //todo: join private room with matching password
+    let rooms = gameState.rooms;
+    var joiner = data.player;
+    console.log('Esto es rooms length: ' + rooms.length);
+    let found_room = rooms.find(function(room) {
+      return (
+        room &&
+        room.index == data.room_id &&
+        room.type == 'private' &&
+        room.language == data.locale
+      );
+    });
+    if (found_room != undefined) {
+
+      socket.emit("error_private_room", { type: "already_exists" });
     } else {
-      // create new public room and join in the first player
+      // create new private room and join in the first player
       // start the game with rounds
-      let randomid = nanoid();
       let room = {
-        index: randomid,
-        type: 'public',
+        index: data.room_id,
+        type: 'private',
         language: data.locale,
+        password: data.password,
         current_round: 1,
         painter_index: 0,
         players: [
@@ -142,8 +128,8 @@ io.on('connection', (socket) => {
             username: joiner,
             score: 0,
             points_gained: 0
-          }
-        ]
+            }
+          ]
       };
       console.log('this is room index now: ' + room.index);
 
@@ -165,7 +151,6 @@ io.on('connection', (socket) => {
         original_joiner_name: joiner,
         new_joiner_name: joiner,
         players: room.players
-
       });
       io.in(room.index)
         .emit('chat_evt', {
@@ -177,11 +162,118 @@ io.on('connection', (socket) => {
       await start_game(io, gameState, room.index);
     }
   });
+  socket.on('join_public_room', async (data) => {
+    try {
+      let rooms = gameState.rooms;
+      //join public room with public type, only takes username
+      // check if public, has less than MAX_PLAYERS and same language
+      var joiner = data.player;
+      console.log('Esto es rooms length: ' + rooms.length);
+      let found_room = rooms.find(function(room) {
+        return (
+          room &&
+          room.type == 'public' &&
+          room.language == data.locale &&
+          room.players.length < MAX_PLAYERS
+        );
+      });
+      if (found_room != undefined) {
+        let room = found_room;
+        let new_joiner_name = joiner;
+        // if player has same name as other player in room, concatenate room_index to name
+        // as many times as necessary, to make it unique
 
-  socket.on('player_guessed', (data) => {
-    // todo: Unidirectional score change coming from server. Clients cannot emit a score change.
-    // todo: when client receive player_guessed, play animation and then wait 5 seconds.
-    socket.broadcast.emit('player_guessed', data);
+        for (let i = 0; i < room.players.length; i++) {
+          if (room.players[i].username == new_joiner_name) {
+            new_joiner_name += '-' + rooms.length;
+          }
+        }
+
+        let new_player = {
+          username: new_joiner_name,
+          score: 0,
+          points_gained: 0
+        };
+
+        found_room.players.push(new_player);
+        // send to client new player list with new player inside
+        socket.join(room.index);
+        socket.username = new_joiner_name;
+        socket.room_index = room.index;
+        socket.isInRoom = true;
+
+        io.in(room.index)
+          .emit('joined_room', {
+            players: room.players
+          });
+        socket.emit('user_join', {
+          id: room.index,
+          original_joiner_name: joiner,
+          new_joiner_name: new_joiner_name,
+          players: room.players,
+          painter: room.players[room.painter_index].username,
+          word: room.current_turn.word.length
+        });
+        io.in(room.index)
+          .emit('chat_evt', {
+            evt_type: 'player_joined',
+            username: new_joiner_name
+          });
+
+      } else {
+        // create new public room and join in the first player
+        // start the game with rounds
+        let randomid = nanoid();
+        let room = {
+          index: randomid,
+          type: 'public',
+          language: data.locale,
+          current_round: 1,
+          painter_index: 0,
+          players: [
+            {
+              username: joiner,
+              score: 0,
+              points_gained: 0
+            }
+          ]
+        };
+        console.log('this is room index now: ' + room.index);
+
+        rooms.push(room);
+
+        // Setting socket variables:
+        socket.join(room.index);
+        socket.username = joiner;
+        socket.room_index = room.index;
+        socket.isInRoom = true;
+        socket.is_waiting_next_round = true;
+
+        io.in(room.index)
+          .emit('joined_room', {
+            players: room.players
+          });
+        socket.emit('user_join', {
+          id: room.index,
+          original_joiner_name: joiner,
+          new_joiner_name: joiner,
+          players: room.players
+
+        });
+        io.in(room.index)
+          .emit('chat_evt', {
+            evt_type: 'player_joined',
+            username: joiner
+          });
+        // the first player to join will start the game loop
+
+        await start_game(io, gameState, room.index);
+      }
+
+    } catch (e) {
+      console.log("Error joining player")
+      console.log(e)
+    }
   });
 
   //drawing
@@ -232,7 +324,6 @@ io.on('connection', (socket) => {
 
           room.current_turn.guessed.push({
             username: socket.username
-            //points_gained: room.current_turn.countdown
           });
 
           io.in(socket.room_index)

@@ -30,7 +30,7 @@
   </section>
 </template>
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import i18n from "@/plugins/i18n";
 import Footer from "@/components/Footer";
 export default {
@@ -39,9 +39,6 @@ export default {
   },
   data: function() {
     return {
-      showErr: false,
-      room_name: "",
-      room_password: "",
       isLoading: false,
       i18n: i18n
     };
@@ -54,15 +51,13 @@ export default {
       }
       this.socket.emit("join_public_room", {
         player: this.localPlayer,
-        locale: this.i18n.locale
+        locale: this.i18n.locale,
+        type: "public"
       });
     },
     goPrivate() {
       this.$router.push({ name: "private" });
     },
-    ...mapActions({
-      join_public_room: "join_public_room"
-    }),
     ...mapMutations({
       set_room_id: "set_room_id",
       set_playerlist: "set_playerlist",
