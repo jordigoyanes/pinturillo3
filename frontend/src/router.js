@@ -5,7 +5,7 @@ import store from "./store";
 import Home from "./views/Home.vue";
 import Game from "./views/Game.vue";
 import GameSelect from "./views/GameSelect.vue";
-import CreateRoom from "./views/CreateRoom.vue";
+import PrivateRoom from "./views/PrivateRoom.vue";
 
 Vue.use(Router);
 
@@ -31,7 +31,7 @@ const router = new Router({
     {
       path: "/private",
       name: "private",
-      component: CreateRoom
+      component: PrivateRoom
     }
   ]
 });
