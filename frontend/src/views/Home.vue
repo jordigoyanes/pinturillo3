@@ -24,13 +24,19 @@
                   />
                 </div>
               </div>
+              
               <div class="field">
-                <div class="select is-info">
-                  <select v-model="i18n.locale">
-                    <option>Español</option>
-                    <option>English</option>
-                  </select>
+                <div class="control">
+                  <label class="radio">
+                    <input type="radio" name="language" value="Español" v-model="i18n.locale" checked>
+                    Español
+                    </label>
+                  <label class="radio">
+                    <input type="radio" name="language" value="English" v-model="i18n.locale">
+                    English
+                  </label>
                 </div>
+                
               </div>
               <button
                 @click="verify_user()"
@@ -77,6 +83,9 @@ export default {
       set_localplayer: "set_localplayer"
     })
   },
-  computed: {}
+  mounted(){
+    //this.i18n.locale = 'es';
+ 
+  }
 };
 </script>
