@@ -1,6 +1,6 @@
 # Pinturillo 3
 
-Pinturillo clone made with Vue, Bulma CSS and Node.js.  
+Pinturillo clone made with Vue, Bulma CSS and Node.js + TypeScript.  
 It uses socket.io to easily achieve real-time drawing, user chatting, and every other game event.
 Stores user and game data using in-memory javascript objects.
 
