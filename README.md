@@ -20,19 +20,39 @@ Maybe in the future
 - Premium account without ads and limitless storage of drawings
 - Competitive Pintanary, tournaments for money, RANKETS!!
 
-#### Test locally
+### Test locally
 
-First build the vue frontend:
+First, install all the NPM dependencies in both backend and frontend:
+```
+npm i
+cd frontend
+npm i
+```
+
+#### Run production server
+
+Build the vue frontend:
 
 ```
-cd frontend
 npm run build
 ```
 
 Run the nodejs server:
 
 ```
-nodemon app
+npm run watch
+```
+#### Run development server
+Run the frontend server
+```
+cd frontend
+npm run serve
+```
+
+Run the node.js backend server:
+
+```
+npm run watch
 ```
 
 ## [LIVE DOCUMENTATION](https://pinturillo3-docs.netlify.com)
