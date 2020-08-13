@@ -2,7 +2,7 @@
   <section class="hero is-dark is-fullheight">
     <div class="hero-body">
       <div class="container is-mobile">
-        <h1 class="title is-size-1 has-text-centered">Pintanary</h1>
+        <h1 class="title is-size-1 has-text-centered">Pinturillo 3</h1>
         <div v-if="!isLoading && socket.connected" class="columns">
           <div class="column">
             <div class="box has-background-success game-select" @click="goPublic()">
@@ -35,12 +35,12 @@ import i18n from "@/plugins/i18n";
 import Footer from "@/components/Footer";
 export default {
   components: {
-    Footer
+    Footer,
   },
-  data: function() {
+  data: function () {
     return {
       isLoading: false,
-      i18n: i18n
+      i18n: i18n,
     };
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
       this.socket.emit("join_public_room", {
         player: this.localPlayer,
         locale: this.i18n.locale,
-        type: "public"
+        type: "public",
       });
     },
     goPrivate() {
@@ -66,17 +66,17 @@ export default {
       set_localplayer: "set_localplayer",
       set_word: "set_word",
       set_show_drawing: "set_show_drawing",
-      set_show_toolbox: "set_show_toolbox"
-    })
+      set_show_toolbox: "set_show_toolbox",
+    }),
   },
   mounted() {
     if (!this.socket.connected) {
       this.socket.connect();
     }
-    this.socket.on("joined_room", room => {
+    this.socket.on("joined_room", (room) => {
       this.set_playerlist(room.players);
     });
-    this.socket.on("user_join", room => {
+    this.socket.on("user_join", (room) => {
       console.log("this is original: " + room.original_joiner_name);
       console.log("this is new joiner name: " + room.new_joiner_name);
       this.set_painter(room.painter);
@@ -99,9 +99,9 @@ export default {
       socket: "socket",
       localPlayer: "localPlayer",
       room_id: "room_id",
-      painter: "painter"
-    })
-  }
+      painter: "painter",
+    }),
+  },
 };
 </script>
 

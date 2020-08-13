@@ -5,7 +5,7 @@
         <button class="leave button is-dark">{{ $t("leave_room") }}</button>
       </a>
 
-      <h1 id="game-title" class="is-size-3 level-item has-text-centered">Pintanary</h1>
+      <h1 id="game-title" class="is-size-3 level-item has-text-centered">Pinturillo 3</h1>
 
       <div class="tags has-addons">
         <span class="tag is-dark">Room ID</span>
@@ -82,14 +82,14 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "game",
-  data: function() {
+  data: function () {
     return {
       isWaitingNextTurn: true,
       turn_clock: 99,
       ready_sec: 3,
       options: [],
       ready_wait: false,
-      is_final_scoreboard: false
+      is_final_scoreboard: false,
     };
   },
   components: {
@@ -97,7 +97,7 @@ export default {
     Chatbox,
     Scores,
     Toolbox,
-    Scoreboard
+    Scoreboard,
   },
   methods: {
     choose_word(data) {
@@ -118,8 +118,8 @@ export default {
       set_show_drawing: "set_show_drawing",
       set_show_toolbox: "set_show_toolbox",
       set_show_options: "set_show_options",
-      set_show_scoreboard: "set_show_scoreboard"
-    })
+      set_show_scoreboard: "set_show_scoreboard",
+    }),
   },
   computed: {
     ...mapState({
@@ -133,7 +133,7 @@ export default {
       show_drawing: "show_drawing",
       show_toolbox: "show_toolbox",
       show_options: "show_options",
-      show_scoreboard: "show_scoreboard"
+      show_scoreboard: "show_scoreboard",
     }),
     leave_link: () => {
       let leave_link =
@@ -141,10 +141,10 @@ export default {
           ? "https://pinturillo3.herokuapp.com"
           : "http://localhost:8080";
       return leave_link;
-    }
+    },
   },
   mounted() {
-    this.socket.on("reveal_letter", data => {
+    this.socket.on("reveal_letter", (data) => {
       if (this.localPlayer != this.painter) {
         let new_word = "";
         for (let i = 0; i < this.word.length; i++) {
@@ -157,7 +157,7 @@ export default {
         this.set_word(new_word);
       }
     });
-    this.socket.on("show_scoreboard", data => {
+    this.socket.on("show_scoreboard", (data) => {
       this.set_show_drawing(false);
       this.set_show_options(false);
       this.set_show_scoreboard(true);
@@ -169,7 +169,7 @@ export default {
         this.set_show_toolbox(true);
       }
     });
-    this.socket.on("reveal_word_length", data => {
+    this.socket.on("reveal_word_length", (data) => {
       console.log(data);
       if (this.localPlayer != this.painter) {
         let word = "";
@@ -180,7 +180,7 @@ export default {
       }
       console.log("reveal word length: " + JSON.stringify(data));
     });
-    this.socket.on("reveal_word", data => {
+    this.socket.on("reveal_word", (data) => {
       this.set_word(data.word.toUpperCase());
       console.log("reveal full word: " + JSON.stringify(data));
     });
@@ -188,23 +188,23 @@ export default {
     this.socket.on("disconnect", () => {
       console.log("disconnect was triggered on the client");
     });
-    this.socket.on("show_options", data => {
+    this.socket.on("show_options", (data) => {
       console.log("estas son mis opciones: " + data);
       this.options = data;
       this.set_show_options(true);
     });
-    this.socket.on("update_round", data => {
+    this.socket.on("update_round", (data) => {
       this.set_current_round(data.round);
     });
-    this.socket.on("left_room", newData => {
+    this.socket.on("left_room", (newData) => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
-    this.socket.on("score_change", newData => {
+    this.socket.on("score_change", (newData) => {
       this.set_playerlist(newData.players);
       console.log("this is the new data: " + JSON.stringify(newData.players));
     });
-    this.socket.on("turn_countdown_sec", data => {
+    this.socket.on("turn_countdown_sec", (data) => {
       if (this.ready_wait) this.ready_wait = false;
       if (!this.show_drawing) this.set_show_drawing(true);
       if (this.localPlayer != this.painter) {
@@ -213,14 +213,14 @@ export default {
       this.turn_clock = data.sec;
       console.log("Second: " + data.sec);
     });
-    this.socket.on("get_ready_sec", data => {
+    this.socket.on("get_ready_sec", (data) => {
       if (this.show_options) this.set_show_options(false);
       this.ready_wait = true;
       this.ready_sec = data.sec;
       this.ready_wait = true;
       console.log("Second: " + data.sec);
     });
-  }
+  },
 };
 </script>
 

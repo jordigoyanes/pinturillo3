@@ -137,9 +137,9 @@ async function start_turn(io: any, gameState: GameState, room_index: string) {
 }
 
 async function countdown_sec(io: any, room_index: string, gameState: GameState) {
-  const COUNTDOWN_TIME = 99;
-  let rooms = gameState.rooms;
-  let current_room = rooms.find((r) => { return r.index == room_index });
+  const COUNTDOWN_TIME: number = 99;
+  let rooms: Room[] = gameState.rooms;
+  let current_room = rooms.find((r: Room) => { return r.index == room_index });
   if (current_room) {
     let word = current_room.current_turn.word;
     let current_turn = current_room.current_turn;

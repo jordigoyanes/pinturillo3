@@ -1,7 +1,7 @@
 {
-  "name": "pintanary",
+  "name": "pinturillo3",
   "version": "1.0.0",
-  "description": "Pintanary nodejs server",
+  "description": "Pinturillo 3 nodejs server",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
