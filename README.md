@@ -6,6 +6,8 @@ Stores user and game data using in-memory javascript objects.
 
 [LIVE DEMO](https://pinturillo3.herokuapp.com)
 
+![Screenshot](https://i.imgur.com/HmzoRiR.png)
+
 ### FEATURES:
 
 - [x] Join public rooms
