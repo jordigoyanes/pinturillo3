@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd frontend && npm run build && cd ..",
-    "start": "babel src -d dist && node dist/index.js",
+    "start": "npm run dev",
+    "dev": "ts-node src/index.ts",
     "watch": "nodemon"
   },
   "repository": {
@@ -16,6 +17,9 @@
   "author": "Jordi Goyanes",
   "dependencies": {
     "@babel/runtime": "^7.7.2",
+    "@types/express": "^4.17.7",
+    "@types/nanoid": "^2.1.0",
+    "@types/socket.io": "^2.1.11",
     "bulma": "^0.7.4",
     "core-js": "^3.3.1",
     "express": "^4.16.2",
@@ -51,6 +55,8 @@
     "node-sass": "^4.9.0",
     "npm-run-all": "^4.1.5",
     "sass-loader": "^7.1.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
     "vue-template-compiler": "^2.5.21"
   }
 }

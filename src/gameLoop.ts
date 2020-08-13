@@ -1,7 +1,10 @@
-var genWords = require('./genWords.js');
-async function start_game(io, gameState, room_index) {
+import { Room, Player, GameState, CurrentTurn } from './index'
+
+
+var genWords = require('./genWords.ts');
+async function start_game(io: any, gameState: GameState, room_index: string) {
   let rooms = gameState.rooms;
-  let current_room = rooms.find((r) => { return r.index == room_index });
+  let current_room = rooms.find((r: Room) => { return r.index == room_index });
 
   /*
     5 segundos para esperar a que acabe el turno
@@ -20,19 +23,20 @@ async function start_game(io, gameState, room_index) {
   }
 }
 
-async function start_turn(io, gameState, room_index) {
+async function start_turn(io: any, gameState: GameState, room_index: string) {
   try {
     let rooms = gameState.rooms;
-    let current_room = rooms.find((r) => { return r.index == room_index });
+    let current_room: any = rooms.find((r) => { return r.index == room_index });
 
     // recursive function that will will give a turn for every player online for 3 rounds.
     if (current_room) {
-      let current_turn = {
+      let current_turn: CurrentTurn = {
         word: '?',
         painter_left: false,
         is_canceled: false,
         num_reports: 0,
         revealed: [],
+        countdown: 0,
         guessed: [
           /* EXAMPLE => username: jordi, points_gained:234 */
         ]
@@ -52,16 +56,16 @@ async function start_turn(io, gameState, room_index) {
       let painter_socket_id;
 
       for (let socket in io.sockets.in(room_index)
-          .connected) {
+        .connected) {
         if (
           io.sockets.in(room_index)
-          .connected[socket].username == painter_username
+            .connected[socket].username == painter_username
         ) {
           console.log('this is the painter_username: ' + painter_username);
           console.log(
             'this is the socket id: ' +
             io.sockets.in(room_index)
-            .connected[socket].id
+              .connected[socket].id
           );
           painter_socket_id = socket;
         }
@@ -132,7 +136,7 @@ async function start_turn(io, gameState, room_index) {
   }
 }
 
-async function countdown_sec(io, room_index, gameState) {
+async function countdown_sec(io: any, room_index: string, gameState: GameState) {
   const COUNTDOWN_TIME = 99;
   let rooms = gameState.rooms;
   let current_room = rooms.find((r) => { return r.index == room_index });
@@ -221,7 +225,7 @@ async function countdown_sec(io, room_index, gameState) {
           // to show the final scoreboard and then run the game loop again.
           console.log('GAME IS OVER!!!!');
           console.log('here show the scoreboards');
-          let winner = current_room.players.sort(function(a, b) { return a.score - b.score })[0];
+          let winner = current_room.players.sort(function (a, b) { return a.score - b.score })[0];
           io.in(room_index)
             .emit("show_scoreboard", {
               winner: winner.username,
@@ -248,7 +252,7 @@ async function countdown_sec(io, room_index, gameState) {
       } else {
         if (current_turn.countdown === next_reveal_sec) {
           console.log("Time to reveal letter")
-          let result, pos_to_reveal;
+          let result, pos_to_reveal: number;
           do {
             pos_to_reveal = Math.floor(Math.random() * Math.floor(word.length))
             result = current_turn.revealed.find(letter_pos => letter_pos == pos_to_reveal);
@@ -275,6 +279,6 @@ async function countdown_sec(io, room_index, gameState) {
 
 module.exports = start_game;
 
-function sleep(time) {
+function sleep(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }

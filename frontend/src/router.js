@@ -37,6 +37,9 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  if (from.name == "game" && to.name == "home") {
+    window.location.href = "/"
+  }
   if (
     to.name != "home" &&
     !store.state.localPlayer &&

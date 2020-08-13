@@ -3,7 +3,7 @@ import path from 'path';
 import nanoid from 'nanoid';
 
 const app = express();
-var start_game = require('./gameLoop.js');
+var start_game = require('./gameLoop.ts');
 
 //middlewares
 app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
@@ -11,7 +11,7 @@ app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
 // app.use(express.static('public'))
 
 // Always redirect to Vue SPA:
-app.get('*', function(request, response) {
+app.get('*', function (request, response) {
   response.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
 });
 
@@ -20,28 +20,60 @@ let server = app.listen(process.env.PORT || 3000);
 console.log('Listening on port ' + (process.env.PORT || 3000));
 
 // pinturillo constants
-const MAX_PLAYERS = 5;
+const MAX_PLAYERS: number = 5;
 
-let gameState = {
+export interface Player {
+  username: string,
+  score: number,
+  points_gained: number
+}
+export interface Room {
+  index: string,
+  type: string,
+  language: string,
+  password?: string,
+  current_round: number,
+  painter_index: number,
+  players: Player[],
+  current_turn: CurrentTurn
+}
+export interface CurrentTurn {
+  word: string,
+  painter_left: boolean,
+  is_canceled: boolean,
+  num_reports: number,
+  revealed: any[],
+  countdown: number,
+  guessed: {
+    username: string,
+    points_gained: number
+  }[]
+}
+export interface GameState {
+  rooms: Room[]
+}
+
+let gameState: GameState = {
   rooms: []
 };
+
 
 //socket.io instantiation
 const io = require('socket.io')(server);
 
 //listen on every connection
-io.on('connection', (socket) => {
+io.on('connection', (socket: any) => {
   // USER
   console.log('New player connected');
 
-  socket.on('join_private_room', async (data) => {
+  socket.on('join_private_room', async (data: any) => {
     //todo: join private room with matching password
-    let rooms = gameState.rooms;
+    let rooms: Room[] = gameState.rooms;
     //join public room with public type, only takes username
     // check if public, has less than MAX_PLAYERS and same language
     var joiner = data.player;
     console.log('Esto es rooms length: ' + rooms.length);
-    let found_room = rooms.find(function(room) {
+    let found_room = rooms.find(function (room: any) {
       return (
         room &&
         room.index == data.room_id &&
@@ -97,12 +129,12 @@ io.on('connection', (socket) => {
         });
     }
   });
-  socket.on('create_private_room', async (data) => {
+  socket.on('create_private_room', async (data: any) => {
     //todo: join private room with matching password
-    let rooms = gameState.rooms;
+    let rooms: Room[] = gameState.rooms;
     var joiner = data.player;
     console.log('Esto es rooms length: ' + rooms.length);
-    let found_room = rooms.find(function(room) {
+    let found_room = rooms.find(function (room: Room) {
       return (
         room &&
         room.index == data.room_id &&
@@ -116,20 +148,29 @@ io.on('connection', (socket) => {
     } else {
       // create new private room and join in the first player
       // start the game with rounds
-      let room = {
+      let room: Room = {
         index: data.room_id,
         type: 'private',
         language: data.locale,
         password: data.password,
         current_round: 1,
         painter_index: 0,
+        current_turn: {
+          word: "",
+          painter_left: false,
+          num_reports: 0,
+          is_canceled: false,
+          countdown: 0,
+          revealed: [],
+          guessed: []
+        },
         players: [
           {
             username: joiner,
             score: 0,
             points_gained: 0
-            }
-          ]
+          }
+        ]
       };
       console.log('this is room index now: ' + room.index);
 
@@ -162,14 +203,14 @@ io.on('connection', (socket) => {
       await start_game(io, gameState, room.index);
     }
   });
-  socket.on('join_public_room', async (data) => {
+  socket.on('join_public_room', async (data: any) => {
     try {
-      let rooms = gameState.rooms;
+      let rooms: Room[] = gameState.rooms;
       //join public room with public type, only takes username
       // check if public, has less than MAX_PLAYERS and same language
       var joiner = data.player;
       console.log('Esto es rooms length: ' + rooms.length);
-      let found_room = rooms.find(function(room) {
+      let found_room: any = rooms.find(function (room: Room) {
         return (
           room &&
           room.type == 'public' &&
@@ -178,7 +219,7 @@ io.on('connection', (socket) => {
         );
       });
       if (found_room != undefined) {
-        let room = found_room;
+        let room: Room = found_room;
         let new_joiner_name = joiner;
         // if player has same name as other player in room, concatenate room_index to name
         // as many times as necessary, to make it unique
@@ -189,7 +230,7 @@ io.on('connection', (socket) => {
           }
         }
 
-        let new_player = {
+        let new_player: Player = {
           username: new_joiner_name,
           score: 0,
           points_gained: 0
@@ -224,12 +265,21 @@ io.on('connection', (socket) => {
         // create new public room and join in the first player
         // start the game with rounds
         let randomid = nanoid();
-        let room = {
+        let room: Room = {
           index: randomid,
           type: 'public',
           language: data.locale,
           current_round: 1,
           painter_index: 0,
+          current_turn: {
+            word: "",
+            painter_left: false,
+            num_reports: 0,
+            is_canceled: false,
+            countdown: 0,
+            revealed: [],
+            guessed: []
+          },
           players: [
             {
               username: joiner,
@@ -239,7 +289,6 @@ io.on('connection', (socket) => {
           ]
         };
         console.log('this is room index now: ' + room.index);
-
         rooms.push(room);
 
         // Setting socket variables:
@@ -277,15 +326,12 @@ io.on('connection', (socket) => {
   });
 
   //drawing
-  socket.on('drawing', (data) => {
-    let room = gameState.rooms.find((r) => {
+  socket.on('drawing', (data: any) => {
+    let room: any = gameState.rooms.find((r: Room) => {
       return r.index == socket.room_index;
     });
 
-    function find_player(player) {
-      return player.username === socket.username;
-    }
-    let painter = room.players.findIndex(find_player);
+    let painter = room.players.findIndex((p: Player) => { return p.username === socket.username; });
     if (painter == room.painter_index) {
       io.in(socket.room_index)
         .emit('drawing', data);
@@ -293,19 +339,19 @@ io.on('connection', (socket) => {
   });
 
   //chat messages
-  socket.on('new_message', (data) => {
-    let room = gameState.rooms.find((r) => {
+  socket.on('new_message', (data: any) => {
+    let room: any = gameState.rooms.find((r: any) => {
       return r.index == socket.room_index;
     });
 
     let word = room.current_turn.word;
-    let has_already_guessed = room.current_turn.guessed.find(function(
-      already_guessed
+    let has_already_guessed = room.current_turn.guessed.find(function (
+      already_guessed: Player
     ) {
       return already_guessed.username == socket.username;
     });
 
-    let player_index = room.players.findIndex(function(element) {
+    let player_index = room.players.findIndex(function (element: Player) {
       return element.username == socket.username;
     });
 
@@ -346,8 +392,8 @@ io.on('connection', (socket) => {
         });
     }
   });
-  socket.on('choose_word', (data) => {
-    let room = gameState.rooms.find((r) => {
+  socket.on('choose_word', (data: any) => {
+    let room: any = gameState.rooms.find((r: any) => {
       return r.index == socket.room_index;
     });
     // must be valid index
@@ -366,7 +412,7 @@ io.on('connection', (socket) => {
           player_left
           player_joined
   */
-  socket.on('chat_evt', (data) => {
+  socket.on('chat_evt', (data: any) => {
     io.in(socket.room_index)
       .emit('chat_evt', data);
   });
@@ -375,10 +421,10 @@ io.on('connection', (socket) => {
       .emit('clear_canvas');
   });
 
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function () {
     let rooms = gameState.rooms;
     let room_index = socket.room_index;
-    let room = rooms.find((r) => {
+    let room: any = rooms.find((r: any) => {
       return r.index == socket.room_index;
     });
     console.log(
@@ -393,7 +439,7 @@ io.on('connection', (socket) => {
     );
 
     if (socket && socket.isInRoom && room) {
-      let arrIndex = rooms.findIndex((r) => {
+      let arrIndex = rooms.findIndex((r: Room) => {
         return r.index == socket.room_index;
       });
       if (room.players.length - 1 == 0) {
@@ -414,10 +460,9 @@ io.on('connection', (socket) => {
         console.log(gameState);
       } else {
         // borrar solo ese jugador
-        function find_player(player) {
-          return player.username === socket.username;
-        }
-        let player_gone = room.players.findIndex(find_player);
+
+        let player_gone = room.players.findIndex((p: Player) => { return p.username === socket.username });
+
         if (player_gone == room.painter_index) {
           room.current_turn.painter_left = true;
         }

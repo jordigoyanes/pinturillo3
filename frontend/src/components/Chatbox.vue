@@ -30,33 +30,31 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "Chatbox",
-  data: function() {
+  data: function () {
     return {
       guess: "",
-      chat_messages: []
+      chat_messages: [],
     };
   },
   methods: {
-    log: function() {
+    log: function () {
       console.log(this.guess);
     },
-    send_message: function() {
+    send_message: function () {
       if (this.guess != "") {
         this.socket.emit("new_message", {
           username: this.localPlayer,
-          message: this.guess
+          message: this.guess,
         });
         this.guess = "";
       }
     },
-    remove_points_gained(players) {
-      let p = players;
-      for (let i = 0; i < p.length; i++) {
-        p[i].points_gained = 0;
-      }
-      return p;
+    remove_points_gained(players_arr) {
+      let players = players_arr;
+      players.forEach((p) => (p.points_gained = 0));
+      return players;
     },
-    scrollToEnd: function() {
+    scrollToEnd: function () {
       var messages = document.getElementById("messages");
       messages.scrollTop = messages.scrollHeight;
     },
@@ -68,15 +66,15 @@ export default {
       set_show_scoreboard: "set_show_scoreboard",
       set_word: "set_word",
       set_playerlist: "set_playerlist",
-      remove_points_gained: "remove_points_gained"
-    })
+      remove_points_gained: "remove_points_gained",
+    }),
   },
   mounted() {
     this.scrollToEnd();
-    this.socket.on("new_message", data => {
+    this.socket.on("new_message", (data) => {
       this.chat_messages = [...this.chat_messages, data];
     });
-    this.socket.on("chat_evt", data => {
+    this.socket.on("chat_evt", (data) => {
       console.log("este es evt_type: " + data.evt_type);
       let message;
       switch (data.evt_type) {
@@ -109,7 +107,7 @@ export default {
       }
       this.chat_messages = [
         ...this.chat_messages,
-        { message: message, username: data.username, type: "evt" }
+        { message: message, username: data.username, type: "evt" },
       ];
     });
   },
@@ -122,9 +120,9 @@ export default {
       localPlayer: "localPlayer",
       room_id: "room_id",
       i18n: "i18n",
-      players: "players"
-    })
-  }
+      players: "players",
+    }),
+  },
 };
 </script>
 <style lang="scss">
