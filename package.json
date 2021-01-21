@@ -30,7 +30,7 @@
     "random-spanish-words": "^2.0.0",
     "random-words": "^1.1.0",
     "roomdata": "^1.1.7-b",
-    "socket.io": "^2.0.4",
+    "socket.io": "^2.4.0",
     "socket.io-client": "^2.2.0",
     "vue": "^2.5.22",
     "vue-i18n": "^8.10.0",
