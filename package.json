@@ -24,7 +24,7 @@
     "core-js": "^3.3.1",
     "express": "^4.16.2",
     "lodash": "^4.17.19",
-    "nanoid": "^2.1.2",
+    "nanoid": "^3.1.31",
     "nodemon": "^1.14.3",
     "path": "^0.12.7",
     "random-spanish-words": "^2.0.0",
